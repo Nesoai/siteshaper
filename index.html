@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiteShaper — from lot to scheme book</title>
+<meta name="description" content="SiteShaper turns a lot and a program into a schematic scheme book: site plan with setbacks, auto-generated floor plates, MEP location markers for single-family, and the numbers table — ready for your architect to review and build from.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d1117'/%3E%3Crect x='6' y='6' width='20' height='20' fill='none' stroke='%2360a5fa' stroke-width='2' stroke-dasharray='3 2'/%3E%3Crect x='10' y='12' width='12' height='10' fill='rgba(96,165,250,.25)' stroke='%2360a5fa' stroke-width='1.6'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#0d1117">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+const GA_ID="";
+if(GA_ID){const s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id='+GA_ID;document.head.appendChild(s);window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config',GA_ID);}
+</script>
+<style>
+:root{--bg:#0d1117;--panel:#11161d;--card:#161d26;--line:#232f3d;--ink:#e9eef4;--dim:#96a6b6;--faint:#5e7080;
+--blue:#60a5fa;--blue-d:#3b82f6;--gold:#eab308;--green:#34d399;--teal:#2dd4bf;--bad:#f87171;--sky:#38bdf8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--sky)}
+header{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(13,17,23,.92);backdrop-filter:blur(8px);z-index:50}
+#logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:-.01em}
+#logo b{color:var(--blue)}
+.hsp{flex:1}
+.pill{font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:6px 13px;color:var(--dim);background:var(--card);cursor:pointer}
+.pill.pro{background:linear-gradient(90deg,#60a5fa,#3b82f6);color:#081226;border:none;font-weight:700}
+.pill.prodone{background:var(--card);color:var(--blue);border:1px solid var(--blue)}
+.tagline{background:linear-gradient(120deg,rgba(96,165,250,.09),rgba(45,212,191,.06));border-bottom:1px solid var(--line);padding:18px 16px;text-align:center}
+.tagline h1{font-family:Fraunces,serif;font-size:clamp(20px,3.4vw,28px)}
+.tagline h1 em{font-style:italic;color:var(--blue)}
+.tagline p{color:var(--dim);font-size:13.5px;margin:6px auto 0;max-width:80ch}
+.flow{display:flex;align-items:stretch;gap:0;max-width:980px;margin:14px auto 0;padding:0 16px}
+.flow .fstep{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;text-align:left;display:flex;gap:10px;align-items:flex-start;min-width:0}
+.flow .fn{width:24px;height:24px;border-radius:50%;background:var(--blue);color:#081226;font-weight:800;font-size:12.5px;display:grid;place-items:center;flex-shrink:0;margin-top:1px}
+.flow .ft b{display:block;font-size:12.5px;color:var(--ink)}
+.flow .ft span{font-size:11.5px;color:var(--dim);line-height:1.45}
+.flow .farrow{align-self:center;color:var(--faint);font-size:17px;padding:0 7px;flex-shrink:0}
+@media(max-width:700px){.flow{flex-direction:column;gap:6px}.flow .farrow{transform:rotate(90deg);align-self:center;padding:0}}
+#app{display:grid;grid-template-columns:400px 1fr;gap:22px;max-width:1240px;margin:22px auto 60px;padding:0 16px}
+@media(max-width:940px){#app{grid-template-columns:1fr}}
+#inputs{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;height:fit-content}
+.lbl{display:block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--dim);margin:15px 0 7px}
+.lbl:first-of-type{margin-top:0}
+.tin{width:100%;background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:10px 12px;font-size:14px;font-family:inherit}
+.tin:focus{outline:none;border-color:var(--blue)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.segrow{display:flex;gap:7px;flex-wrap:wrap}
+.seg{border:1px solid var(--line);background:var(--card);color:var(--dim);border-radius:9px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.seg.on{border-color:var(--blue);color:var(--blue);background:rgba(96,165,250,.08)}
+.mini{font-size:11.5px;color:var(--faint);margin-top:4px}
+#runBtn{width:100%;margin-top:18px;border:none;border-radius:11px;padding:13px;font-weight:800;font-size:14.5px;background:var(--blue);color:#081226;cursor:pointer;font-family:inherit}
+#runBtn:hover{filter:brightness(1.08)}
+.exbtn{width:100%;border:1px dashed var(--blue);background:rgba(96,165,250,.07);color:var(--blue);border-radius:10px;padding:10px;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:14px;font-family:inherit}
+.exbtn:hover{background:rgba(96,165,250,.14)}
+.exbanner{display:none;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.35);border-radius:10px;padding:9px 12px;font-size:12.5px;color:var(--dim);margin-bottom:14px}
+.exbanner b{color:var(--green)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.card h4{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--blue);margin-bottom:11px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h4 .sub{font-size:10.5px;color:var(--faint);text-transform:none;letter-spacing:0;font-weight:500}
+.planwrap{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;overflow:auto;position:relative}
+.planwrap svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.flag{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.35);border-radius:9px;padding:9px 12px;font-size:12.5px;color:var(--dim);margin:8px 0 0}
+.flag b{color:var(--gold)}
+.flag.err{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.4)}
+.flag.err b{color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-weight:600}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:700}
+.lockover{position:absolute;inset:0;background:rgba(13,17,23,.72);backdrop-filter:blur(4px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-radius:10px;z-index:5;text-align:center;padding:20px}
+.lockover b{color:var(--gold);font-size:14px}
+.lockover span{color:var(--dim);font-size:12.5px;max-width:40ch}
+.lockbtn{display:inline-block;border:none;border-radius:9px;background:var(--gold);color:#221a03;font-weight:700;font-size:12.5px;padding:9px 15px;cursor:pointer;font-family:inherit;text-decoration:none}
+.wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:4}
+.wm span{transform:rotate(-24deg);font-family:Fraunces,serif;font-size:34px;color:rgba(150,166,182,.16);font-weight:700;letter-spacing:.08em;white-space:nowrap}
+.mep-legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:11.5px;color:var(--dim);margin-top:9px}
+.mep-legend span{display:inline-flex;align-items:center;gap:6px}
+.rowbtns{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px}
+.smallbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:9px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none}
+.togglerow{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.tgl{border:1px solid var(--line);background:var(--panel);color:var(--dim);border-radius:999px;padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.tgl.on{border-color:var(--teal);color:var(--teal);background:rgba(45,212,191,.08)}
+.cta-neso{display:flex;gap:13px;align-items:center;background:linear-gradient(120deg,rgba(96,165,250,.08),rgba(45,212,191,.06));border:1px solid var(--line);border-radius:12px;padding:15px 17px;margin-top:16px;flex-wrap:wrap}
+.cta-neso p{font-size:13px;color:var(--dim);flex:1;min-width:220px}
+.cta-neso b{color:var(--ink)}
+.cta-neso a{background:var(--blue);color:#081226;font-weight:700;font-size:13px;border-radius:999px;padding:10px 17px;text-decoration:none}
+footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:var(--faint);text-align:center;line-height:1.7}
+#modal{position:fixed;inset:0;background:rgba(5,8,12,.7);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:80;padding:18px}
+#modal.on{display:flex}
+#mcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;max-width:470px;width:100%;padding:22px;position:relative;max-height:86vh;overflow:auto}
+#mcard h2{font-family:Fraunces,serif;font-size:20px;margin-bottom:10px}
+.closex{position:absolute;top:10px;right:14px;border:none;background:none;color:var(--dim);font-size:22px;cursor:pointer}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(90px);background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:11px 20px;font-size:13.5px;font-weight:600;z-index:90;transition:transform .25s}
+#toast.on{transform:translateX(-50%) translateY(0)}
+.tourhl{outline:2px solid var(--blue);outline-offset:3px;border-radius:10px;transition:outline .2s}
+#tourCard{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(140%);width:min(440px,92vw);background:var(--card);border:1px solid var(--blue);border-radius:14px;padding:15px 17px;z-index:95;box-shadow:0 18px 50px -12px rgba(0,0,0,.6);transition:transform .3s}
+#tourCard.on{transform:translateX(-50%) translateY(0)}
+#tourCard .tstep{font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--blue);text-transform:uppercase}
+#tourCard .ttext{font-size:13.5px;color:var(--ink);margin:5px 0 12px;line-height:1.5}
+#tourCard .tbtns{display:flex;gap:8px;justify-content:flex-end}
+#tourCard .tbtns button{border:1px solid var(--line);background:var(--panel);color:var(--dim);border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit}
+#tourCard .tbtns button.pri{background:var(--blue);border-color:var(--blue);color:#081226}
+@media print{
+ header,.tagline,.flow,#inputs,.rowbtns,.cta-neso,footer,#toast,#modal,#tourCard,.exbtn,.exbanner,.lockover,.wm,.togglerow .tgl.lockedtgl{display:none!important}
+ body{background:#fff;color:#000}
+ #app{display:block}
+ .card{border-color:#bbb;background:#fff;break-inside:avoid;margin-bottom:14px}
+ .card h4{color:#1d4ed8}
+ .planwrap{background:#fff;border-color:#ccc}
+ table,th,td{color:#000;border-color:#ccc}
+ .flag{background:#fffbe6;border-color:#e0c96a;color:#333}
+}
+</style>
+</head>
+<body>
+<header>
+  <div id="logo"><svg width="25" height="25" viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="22" fill="none" stroke="#60a5fa" stroke-width="1.8" stroke-dasharray="3.5 2.5"/><rect x="10" y="12" width="13" height="11" fill="rgba(96,165,250,.22)" stroke="#60a5fa" stroke-width="1.8"/></svg> Site<b>Shaper</b></div>
+  <div class="hsp"></div>
+  <button class="pill" id="tourBtn" title="Replay the 60-second tour">&#127891; Tour</button>
+  <button class="pill pro" id="proBtn">Unlock full access</button>
+</header>
+
+<div class="tagline">
+  <h1>From lot to <em>scheme book.</em></h1>
+  <p>Enter your lot, setbacks, and program &mdash; SiteShaper draws the site plan, generates schematic floor plates (with <b>MEP locations</b> on single-family), and assembles a printable scheme book your architect can review, redline, and build from. <b>Schematic design intent &mdash; not construction documents.</b></p>
+</div>
+
+<div class="flow" aria-label="How SiteShaper works">
+  <div class="fstep"><div class="fn">1</div><div class="ft"><b>Shape the site</b><span>Lot dimensions, setbacks, and where the building sits &mdash; the envelope draws itself.</span></div></div>
+  <div class="farrow">&rarr;</div>
+  <div class="fstep"><div class="fn">2</div><div class="ft"><b>Set the program</b><span>Single-family, townhomes, or multifamily &mdash; beds, units, stories, parking.</span></div></div>
+  <div class="farrow">&rarr;</div>
+  <div class="fstep"><div class="fn">3</div><div class="ft"><b>Get the scheme book</b><span>Site plan, floor plates, MEP markers, numbers table &mdash; print it and hand it over.</span></div></div>
+</div>
+
+<div id="app">
+  <div id="inputs">
+    <button class="exbtn" id="exBtn">&#9654; Load an example &mdash; see a finished scheme first</button>
+    <div class="exbanner" id="exBanner"><b>Juniper Court</b> &mdash; a two-story 4-bed/2.5-bath with a 2-car garage on a 62&times;125 lot. Explore the plates and MEP markers, then reshape it into your project.</div>
+
+    <label class="lbl">Project name</label>
+    <input class="tin" id="pname" placeholder="e.g. Juniper Court">
+
+    <label class="lbl">Project type</label>
+    <div class="segrow" id="typeRow"></div>
+
+    <label class="lbl">Lot (feet)</label>
+    <div class="two">
+      <div><input class="tin" id="lotW" type="number" value="62" min="20" step="1"><div class="mini">Width (street frontage)</div></div>
+      <div><input class="tin" id="lotD" type="number" value="125" min="40" step="1"><div class="mini">Depth</div></div>
+    </div>
+
+    <label class="lbl">Setbacks (feet)</label>
+    <div class="three">
+      <div><input class="tin" id="sbF" type="number" value="20" min="0"><div class="mini">Front</div></div>
+      <div><input class="tin" id="sbS" type="number" value="7" min="0"><div class="mini">Sides (each)</div></div>
+      <div><input class="tin" id="sbR" type="number" value="20" min="0"><div class="mini">Rear</div></div>
+    </div>
+
+    <!-- SFH program -->
+    <div id="progSFH">
+      <label class="lbl">Home program</label>
+      <div class="two">
+        <div><input class="tin" id="beds" type="number" value="3" min="1" max="6"><div class="mini">Bedrooms</div></div>
+        <div><input class="tin" id="baths" type="number" value="2" min="1" max="4" step="0.5"><div class="mini">Baths</div></div>
+      </div>
+      <div class="two" style="margin-top:10px">
+        <div><input class="tin" id="sfhStories" type="number" value="1" min="1" max="2"><div class="mini">Stories (1&ndash;2)</div></div>
+        <div>
+          <div class="segrow" id="garRow" style="margin-top:0"></div>
+          <div class="mini">Garage</div>
+        </div>
+      </div>
+      <label class="lbl">Target finished area (SF)</label>
+      <input class="tin" id="sfhSF" type="number" value="1500" min="400" step="50">
+      <div class="mini">Leave as suggested or set your own; excludes garage.</div>
+    </div>
+
+    <!-- Townhouse program -->
+    <div id="progTH" style="display:none">
+      <label class="lbl">Row program</label>
+      <div class="two">
+        <div><input class="tin" id="thUnits" type="number" value="4" min="2" max="8"><div class="mini">Units in the row</div></div>
+        <div><input class="tin" id="thBeds" type="number" value="3" min="1" max="4"><div class="mini">Beds per unit</div></div>
+      </div>
+      <div class="mini" style="margin-top:8px">Two-story units, ~20 ft wide &times; 36 ft deep each, shared party walls with back-to-back plumbing.</div>
+    </div>
+
+    <!-- MF program -->
+    <div id="progMF" style="display:none">
+      <label class="lbl">Unit mix (total across building)</label>
+      <div class="two">
+        <div><input class="tin" id="mSt" type="number" value="0" min="0"><div class="mini">Studios</div></div>
+        <div><input class="tin" id="m1" type="number" value="8" min="0"><div class="mini">1-bedroom</div></div>
+      </div>
+      <div class="two" style="margin-top:10px">
+        <div><input class="tin" id="m2" type="number" value="8" min="0"><div class="mini">2-bedroom</div></div>
+        <div><input class="tin" id="m3" type="number" value="0" min="0"><div class="mini">3-bedroom</div></div>
+      </div>
+      <label class="lbl">Stories</label>
+      <input class="tin" id="mfStories" type="number" value="3" min="1" max="6">
+      <div class="mini">Double-loaded corridor; stair cores both ends, elevator at 3+ stories.</div>
+    </div>
+
+    <label class="lbl">Parking</label>
+    <div class="two">
+      <div><input class="tin" id="pratio" type="number" value="2" min="0" max="4" step="0.5"><div class="mini">Spaces per unit / home</div></div>
+      <div><div class="segrow" id="parkRow" style="margin-top:0"></div><div class="mini">Layout</div></div>
+    </div>
+
+    <label class="lbl">Building placement</label>
+    <div class="two">
+      <div><input class="tin" id="offF" type="number" value="0" min="0" step="1"><div class="mini">Extra push-back from front (ft)</div></div>
+      <div><input class="tin" id="offS" type="number" value="0" step="1"><div class="mini">Shift left(&minus;)/right(+) (ft)</div></div>
+    </div>
+
+    <button id="runBtn">Draw the scheme &rarr;</button>
+    <p class="mini" style="margin-top:10px"><b>Schematic design intent only.</b> Not architectural, engineering, or MEP design; not for permitting or construction. Confirm all dimensions, codes, and requirements with your licensed design professionals and jurisdiction. Nothing you enter leaves this device.</p>
+  </div>
+
+  <div id="out"><div id="results"></div></div>
+</div>
+
+<footer><span class="np">SiteShaper &middot; a <a href="https://nesoai.github.io/mallory/" target="_blank" rel="noopener">Boundless</a> tool &middot; v1.0 &middot; &copy; 2026 Boundless / Mallory Bailey-Finkley &mdash; all rights reserved &middot; <a href="https://tally.so/r/rj1Z15?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://nesoai.github.io/buildbrief/">BuildBrief</a> + <a href="https://nesoai.github.io/proforma/">ProForma</a>.</footer>
+<div id="modal"><div id="mcard"><button class="closex" id="mClose">&times;</button><h2 id="mTitle"></h2><div id="mBody"></div></div></div>
+<div id="toast"></div>
+<div id="tourCard" role="dialog" aria-label="Guided tour">
+  <div class="tstep" id="tourStep"></div>
+  <div class="ttext" id="tourText"></div>
+  <div class="tbtns"><button id="tourSkip">Skip</button><button class="pri" id="tourNext">Next</button></div>
+</div>
+
+<script>
+/* ============ SITESHAPER v1.0 (Phase A) ============ */
+const BUY_URL="mailto:nesoai.us@gmail.com?subject="+encodeURIComponent("Requesting SiteShaper full access ($199 founding price)")+"&body="+encodeURIComponent("Hi Boundless — I'd like SiteShaper full access. Please send my unlock code and how to pay."); // ← swap for Gumroad when live
+const PRICE_TXT="$199 founding price";
+const NESO_CTA="https://tally.so/r/q4MLYg?track=re&services="+encodeURIComponent("Development Feasibility (Standard)")+"&credits=12&source=siteshaper";
+
+const $=id=>document.getElementById(id);
+const KEY='siteshaper.v1';
+let S=Object.assign({pro:false,mep:true},(()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}})());
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function toast(t){const x=$('toast');x.textContent=t;x.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>x.classList.remove('on'),2600)}
+const esc=x=>String(x==null?'':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fk=n=>Math.round(n).toLocaleString('en-US');
+
+/* ---- selectors ---- */
+const TYPES=[['sfh','&#127968; Single-family'],['th','&#127969; Townhouse row'],['mf','&#127970; Multifamily']];
+const GARS=[['0','None'],['1','1-car'],['2','2-car']];
+const PARKS=[['drive','Driveway'],['surface','Surface lot (rear)']];
+let TYPE='sfh', GAR='2', PARK='drive';
+function segInit(rowId,items,get,set){
+  $(rowId).innerHTML=items.map(x=>`<button class="seg ${x[0]===get()?'on':''}" data-v="${x[0]}">${x[1]}</button>`).join('');
+  $(rowId).querySelectorAll('.seg').forEach(b=>b.onclick=()=>{set(b.dataset.v);$(rowId).querySelectorAll('.seg').forEach(x=>x.classList.toggle('on',x===b));onType();run();});
+}
+segInit('typeRow',TYPES,()=>TYPE,v=>TYPE=v);
+segInit('garRow',GARS,()=>GAR,v=>GAR=v);
+segInit('parkRow',PARKS,()=>PARK,v=>PARK=v);
+function onType(){
+  $('progSFH').style.display=TYPE==='sfh'?'':'none';
+  $('progTH').style.display=TYPE==='th'?'':'none';
+  $('progMF').style.display=TYPE==='mf'?'':'none';
+  if(TYPE==='sfh'&&PARK!=='drive'){PARK='drive';segInit('parkRow',PARKS,()=>PARK,v=>PARK=v);}
+  if(TYPE!=='sfh'&&PARK!=='surface'){PARK='surface';segInit('parkRow',PARKS,()=>PARK,v=>PARK=v);}
+}
+['pname','lotW','lotD','sbF','sbS','sbR','beds','baths','sfhStories','sfhSF','thUnits','thBeds','mSt','m1','m2','m3','mfStories','pratio','offF','offS'].forEach(id=>{const e=$(id); if(e) e.oninput=()=>run();});
+$('runBtn').onclick=()=>{run();const r=$('results');if(r&&r.scrollIntoView)r.scrollIntoView({behavior:'smooth',block:'start'});};
+
+/* ============ GEOMETRY MODEL ============ */
+const UNITSZ={st:520,b1:700,b2:950,b3:1150};
+function model(){
+  const lotW=+$('lotW').value||0, lotD=+$('lotD').value||0;
+  const sbF=+$('sbF').value||0, sbS=+$('sbS').value||0, sbR=+$('sbR').value||0;
+  const envW=Math.max(0,lotW-2*sbS), envD=Math.max(0,lotD-sbF-sbR);
+  const flags=[];
+  let bw=0,bd=0,stories=1,units=1,gsf=0,net=0,label='',garW=0,garD=0;
+  if(TYPE==='sfh'){
+    stories=Math.min(2,Math.max(1,+$('sfhStories').value||1));
+    net=+$('sfhSF').value||1200;
+    const perFloor=net/stories;
+    garW=GAR==='0'?0:(GAR==='1'?13:22); garD=GAR==='0'?0:22;
+    // choose footprint: aspect ~ wider than deep, fit envelope width
+    let fw=Math.sqrt(perFloor*1.35), fd=perFloor/fw;
+    bw=Math.min(envW - (0), Math.max(fw, garW+14)); // room for garage + entry
+    bd=Math.max(fd, garD+4);
+    // recompute to hold area
+    bd=perFloor/ (bw-(stories===1&&GAR!=='0'?0:0)) ;
+    if(GAR!=='0'){ // garage adds to ground footprint beside living area
+      const liveW=Math.max(14,bw-garW);
+      bd=Math.max(perFloor/liveW, garD);
+      bw=liveW+garW;
+    }
+    bw=Math.round(bw); bd=Math.round(bd);
+    gsf=net+(GAR==='0'?0:garW*garD);
+    units=1; label='Single-family';
+  } else if(TYPE==='th'){
+    const n=Math.max(2,Math.min(8,+$('thUnits').value||4));
+    bw=n*20; bd=36; stories=2; units=n;
+    net=n*20*36*2*0.9; gsf=n*20*36*2; label=n+'-unit townhouse row';
+  } else {
+    const mix={st:+$('mSt').value||0,b1:+$('m1').value||0,b2:+$('m2').value||0,b3:+$('m3').value||0};
+    units=mix.st+mix.b1+mix.b2+mix.b3;
+    stories=Math.max(1,Math.min(6,+$('mfStories').value||3));
+    net=mix.st*UNITSZ.st+mix.b1*UNITSZ.b1+mix.b2*UNITSZ.b2+mix.b3*UNITSZ.b3;
+    gsf=net/0.80; // 80% efficiency
+    const unitDepth=28, corr=6;
+    bd=unitDepth*2+corr; // 62
+    bw=Math.round((gsf/stories)/bd);
+    bw=Math.max(bw, 44); // min for cores
+    label=units+'-unit multifamily';
+    window.__MIX=mix;
+  }
+  if(bw>envW+0.01) flags.push({t:'err',m:'<b>Doesn\u2019t fit:</b> the plate is '+Math.round(bw)+' ft wide but the buildable envelope is only '+Math.round(envW)+' ft. Reduce the program, add stories, or revisit setbacks.'});
+  if(bd>envD+0.01) flags.push({t:'err',m:'<b>Doesn\u2019t fit:</b> the plate is '+Math.round(bd)+' ft deep vs a '+Math.round(envD)+' ft envelope. Reduce depth or program.'});
+  const offF=Math.max(0,+$('offF').value||0);
+  let offS=+$('offS').value||0;
+  const maxShift=Math.max(0,(envW-bw)/2);
+  offS=Math.max(-maxShift,Math.min(maxShift,offS));
+  const bx=sbS+(envW-bw)/2+offS, by=sbF+offF;
+  if(by+bd>lotD-sbR+0.01) flags.push({t:'err',m:'<b>Placement:</b> the extra push-back pushes the building into the rear setback. Reduce it.'});
+  // parking
+  const homes=units;
+  const stalls=Math.ceil(homes*(+$('pratio').value||0));
+  const parkSF=PARK==='drive'?stalls*180:stalls*330;
+  const rearFree=(lotD-sbR)-(by+bd);
+  const parkDepth=PARK==='surface'?Math.ceil(parkSF/Math.max(1,bw)):0;
+  if(PARK==='surface'&&parkDepth>rearFree) flags.push({t:'warn',m:'<b>Parking squeeze:</b> ~'+fk(parkSF)+' SF of surface parking needs ~'+parkDepth+' ft of rear depth; only '+Math.max(0,Math.round(rearFree))+' ft remains. Consider fewer stalls, tuck-under, or more stories.'});
+  const lotSF=lotW*lotD, foot=bw*bd, cov=lotSF?foot/lotSF:0, far=lotSF?gsf/lotSF:0;
+  const acres=lotSF/43560, dua=acres?homes/acres:0;
+  if(cov>0.55) flags.push({t:'warn',m:'<b>Coverage:</b> footprint is '+Math.round(cov*100)+'% of the lot \u2014 many codes cap 40\u201360%. Verify locally.'});
+  return {lotW,lotD,sbF,sbS,sbR,envW,envD,bw,bd,bx,by,stories,units,net,gsf,foot,cov,far,acres,dua,stalls,parkSF,parkDepth,flags,label,garW,garD};
+}
+
+/* ============ SVG HELPERS ============ */
+const NS='http://www.w3.org/2000/svg';
+function svgOpen(w,h){return `<svg viewBox="0 0 ${w} ${h}" xmlns="${NS}" font-family="Inter">`;}
+function R(x,y,w,h,o={}){return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${o.f||'none'}" stroke="${o.s||'none'}" stroke-width="${o.sw||1}" ${o.d?`stroke-dasharray="${o.d}"`:''} rx="${o.rx||0}"/>`;}
+function T(x,y,t,o={}){return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="${o.f||'#96a6b6'}" font-size="${o.z||9}" ${o.a?`text-anchor="${o.a}"`:''} ${o.w?`font-weight="${o.w}"`:''} ${o.r?`transform="rotate(${o.r} ${x.toFixed(1)} ${y.toFixed(1)})"`:''}>${t}</text>`;}
+function L(x1,y1,x2,y2,o={}){return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${o.s||'#3a4757'}" stroke-width="${o.sw||1}" ${o.d?`stroke-dasharray="${o.d}"`:''}/>`;}
+
+/* ============ SITE PLAN ============ */
+function sitePlan(M){
+  const maxW=560, pad=34;
+  const sc=Math.min((maxW-pad*2)/M.lotW, 420/M.lotD);
+  const W=M.lotW*sc+pad*2, H=M.lotD*sc+pad*2+16;
+  const X=x=>pad+x*sc, Y=y=>pad+y*sc;
+  let s=svgOpen(W,H);
+  // street
+  s+=R(pad-14,6,M.lotW*sc+28,14,{f:'rgba(94,112,128,.15)'});
+  s+=T(W/2,16,'STREET',{a:'middle',z:8.5,f:'#5e7080'});
+  // lot
+  s+=R(X(0),Y(0),M.lotW*sc,M.lotD*sc,{s:'#96a6b6',sw:1.6});
+  // envelope
+  s+=R(X(M.sbS),Y(M.sbF),M.envW*sc,M.envD*sc,{s:'#60a5fa',sw:1.1,d:'6 4'});
+  s+=T(X(M.sbS)+4,Y(M.sbF)+11,'BUILDABLE ENVELOPE',{z:7.5,f:'#60a5fa'});
+  // building
+  s+=R(X(M.bx),Y(M.by),M.bw*sc,M.bd*sc,{f:'rgba(96,165,250,.16)',s:'#60a5fa',sw:1.8});
+  s+=T(X(M.bx)+M.bw*sc/2,Y(M.by)+M.bd*sc/2-4,esc(M.label),{a:'middle',z:9.5,f:'#cfe3ff',w:700});
+  s+=T(X(M.bx)+M.bw*sc/2,Y(M.by)+M.bd*sc/2+8,M.stories+(M.stories>1?' stories':' story')+' \u00b7 '+fk(M.foot)+' SF footprint',{a:'middle',z:8,f:'#96a6b6'});
+  // parking
+  if(PARK==='surface'&&M.parkDepth>0){
+    const py=M.by+M.bd+4;
+    s+=R(X(M.bx),Y(py),M.bw*sc,Math.min(M.parkDepth,(M.lotD-M.sbR)-py)*sc,{f:'rgba(234,179,8,.10)',s:'#eab308',sw:1,d:'4 3'});
+    s+=T(X(M.bx)+M.bw*sc/2,Y(py)+12,'SURFACE PARKING \u00b7 '+M.stalls+' stalls',{a:'middle',z:8,f:'#d9b44a'});
+  } else if(PARK==='drive'){
+    const dw=Math.min(20,M.garW||16), dx=M.bx+(M.garW? (M.bw-M.garW): (M.bw-dw)/2);
+    s+=R(X(dx),Y(0),(M.garW||dw)*sc,M.by*sc,{f:'rgba(234,179,8,.10)',s:'#eab308',sw:1,d:'4 3'});
+    s+=T(X(dx)+((M.garW||dw)*sc)/2,Y(0)+M.by*sc/2,'DRIVE',{a:'middle',z:8,f:'#d9b44a',r:90});
+  }
+  // dims
+  s+=T(X(M.lotW/2),H-6,M.lotW+"' frontage",{a:'middle',z:8.5});
+  s+=T(12,Y(M.lotD/2),M.lotD+"'",{a:'middle',z:8.5,r:-90});
+  s+=T(X(M.sbS/2),Y(M.sbF+M.envD/2),M.sbS+"'",{a:'middle',z:7.5,f:'#5e7080'});
+  s+=T(X(M.lotW)-10,Y(M.sbF/2)+3,M.sbF+"' front",{a:'end',z:7.5,f:'#5e7080'});
+  s+=T(X(M.lotW)-10,Y(M.lotD-M.sbR/2)+3,M.sbR+"' rear",{a:'end',z:7.5,f:'#5e7080'});
+  // north arrow
+  s+=`<g transform="translate(${W-24},${34})"><path d="M0,10 L5,-8 L10,10 L5,5 Z" fill="#96a6b6"/><text x="5" y="22" fill="#96a6b6" font-size="8" text-anchor="middle">N</text></g>`;
+  s+='</svg>';
+  return s;
+}
+
+/* ============ MEP SYMBOLS ============ */
+function mep(x,y,kind){
+  const c={P:'#2dd4bf',E:'#eab308',H:'#f472b6',W:'#60a5fa',C:'#f472b6'};
+  if(kind==='P') return `<circle cx="${x}" cy="${y}" r="5" fill="none" stroke="${c.P}" stroke-width="1.6"/><text x="${x}" y="${y+3}" fill="${c.P}" font-size="7" text-anchor="middle" font-weight="700">P</text>`;
+  if(kind==='E') return R(x-5,y-5,10,10,{s:c.E,sw:1.6})+T(x,y+3,'E',{f:c.E,z:7,a:'middle',w:700});
+  if(kind==='H') return `<path d="M${x},${y-6} L${x+6},${y+4} L${x-6},${y+4} Z" fill="none" stroke="${c.H}" stroke-width="1.6"/><text x="${x}" y="${y+2.5}" fill="${c.H}" font-size="6.5" text-anchor="middle" font-weight="700">H</text>`;
+  if(kind==='W') return `<circle cx="${x}" cy="${y}" r="5.5" fill="none" stroke="${c.W}" stroke-width="1.6"/><text x="${x}" y="${y+3}" fill="${c.W}" font-size="6.5" text-anchor="middle" font-weight="700">WH</text>`;
+  if(kind==='C') return R(x-6,y-4,12,8,{s:c.C,sw:1.4,d:'2 2'})+T(x,y+2.5,'AC',{f:c.C,z:6.5,a:'middle',w:700});
+  return '';
+}
+const MEP_LEGEND=`<div class="mep-legend">
+ <span><svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="none" stroke="#2dd4bf" stroke-width="1.6"/></svg> Plumbing fixture group</span>
+ <span><svg width="14" height="14"><rect x="2" y="2" width="10" height="10" fill="none" stroke="#eab308" stroke-width="1.6"/></svg> Electrical panel</span>
+ <span><svg width="14" height="14"><path d="M7,1 L13,11 L1,11 Z" fill="none" stroke="#f472b6" stroke-width="1.6"/></svg> HVAC air handler</span>
+ <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="#60a5fa" stroke-width="1.6"/></svg> Water heater</span>
+ <span><svg width="16" height="12"><rect x="1" y="2" width="14" height="8" fill="none" stroke="#f472b6" stroke-width="1.4" stroke-dasharray="2 2"/></svg> Condenser (exterior)</span>
+ <span style="color:#2dd4bf">&#9473;&#9473; Plumbing wet wall</span></div>`;
+
+/* ============ SFH FLOOR PLATES ============ */
+function bandLayout(rooms,x,y,w,h,sc,showMEP){
+  // rooms: [{n,wt,mep:[..]}] laid left→right proportionally
+  const tot=rooms.reduce((a,r)=>a+r.wt,0);
+  let cx=x, out='';
+  rooms.forEach(r=>{
+    const rw=w*r.wt/tot;
+    out+=R(cx,y,rw,h,{s:'#3a4757',sw:1});
+    const ftW=Math.round(rw/sc), ftD=Math.round(h/sc);
+    out+=T(cx+rw/2,y+h/2-3,r.n,{a:'middle',z:8,f:'#cfd9e4',w:600});
+    out+=T(cx+rw/2,y+h/2+8,ftW+"'\u00d7"+ftD+"'",{a:'middle',z:7,f:'#5e7080'});
+    if(showMEP&&r.mep) r.mep.forEach((k,i)=>{ out+=mep(cx+10+i*14, y+11, k); });
+    r._x=cx; r._w=rw;
+    cx+=rw;
+  });
+  return out;
+}
+function sfhPlate(M,floor,showMEP){
+  const maxW=560,pad=30;
+  const sc=Math.min((maxW-pad*2)/M.bw, 300/M.bd);
+  const W=M.bw*sc+pad*2, H=M.bd*sc+pad*2+40;
+  const X=pad,Y=pad;
+  const beds=Math.max(1,+$('beds').value||3), baths=+$('baths').value||2;
+  const twoSt=M.stories===2;
+  let s=svgOpen(W,H);
+  s+=R(X,Y,M.bw*sc,M.bd*sc,{s:'#60a5fa',sw:2});
+  const frontH=M.bd*sc*0.46, rearH=M.bd*sc-frontH;
+  let front=[],rear=[];
+  if(!twoSt){ // single story
+    if(M.garW) front.push({n:'GARAGE',wt:M.garW,mep:showMEP?['E','W','H']:null});
+    front.push({n:'ENTRY',wt:8});
+    front.push({n:'LIVING',wt:16});
+    front.push({n:'KITCHEN / DINING',wt:15,mep:showMEP?['P']:null});
+    rear.push({n:'PRIMARY BED',wt:14});
+    rear.push({n:'PRIMARY BATH',wt:7,mep:showMEP?['P']:null});
+    for(let b=2;b<=beds;b++) rear.push({n:'BED '+b,wt:11});
+    if(baths>=2) rear.splice(3,0,{n:'BATH 2',wt:6,mep:showMEP?['P']:null});
+    rear.push({n:'LAUNDRY',wt:6,mep:showMEP?['P']:(null)});
+    if(!M.garW&&showMEP) rear[rear.length-1].mep=['P','E','W','H'];
+  } else if(floor===1){
+    if(M.garW) front.push({n:'GARAGE',wt:M.garW,mep:showMEP?['E','W','H']:null});
+    front.push({n:'ENTRY / FOYER',wt:9});
+    front.push({n:'LIVING',wt:16});
+    rear.push({n:'KITCHEN / DINING',wt:16,mep:showMEP?['P']:null});
+    rear.push({n:'POWDER',wt:5,mep:showMEP?['P']:null});
+    rear.push({n:'LAUNDRY / MUD',wt:7,mep:showMEP?['P']:null});
+    rear.push({n:'FLEX / STUDY',wt:10});
+    if(!M.garW&&showMEP) rear[2].mep=['P','E','W','H'];
+  } else { // floor 2
+    front.push({n:'BED 2',wt:11});
+    if(baths>=2) front.push({n:'BATH 2',wt:6,mep:showMEP?['P']:null});
+    for(let b=3;b<=beds;b++) front.push({n:'BED '+b,wt:11});
+    rear.push({n:'PRIMARY BED',wt:15});
+    rear.push({n:'PRIMARY BATH',wt:7,mep:showMEP?['P']:null});
+    rear.push({n:'W.I.C.',wt:6});
+    rear.push({n:'HALL / STAIR',wt:6});
+  }
+  s+=bandLayout(front,X,Y,M.bw*sc,frontH,sc,showMEP);
+  s+=bandLayout(rear,X,Y+frontH,M.bw*sc,rearH,sc,showMEP);
+  // wet wall along band divider spanning plumbing rooms
+  if(showMEP){
+    const wet=[...front,...rear].filter(r=>r.mep&&r.mep.includes('P'));
+    if(wet.length){
+      const x1=Math.min(...wet.map(r=>r._x)), x2=Math.max(...wet.map(r=>r._x+r._w));
+      s+=L(x1,Y+frontH,x2,Y+frontH,{s:'#2dd4bf',sw:3});
+      s+=T((x1+x2)/2,Y+frontH-5,'PLUMBING WET WALL',{a:'middle',z:7,f:'#2dd4bf',w:700});
+    }
+    // condenser outside rear wall
+    s+=mep(X+M.bw*sc-18,Y+M.bd*sc+12,'C');
+    s+=T(X+M.bw*sc-30,Y+M.bd*sc+15,'condenser pad',{a:'end',z:7,f:'#5e7080'});
+  }
+  s+=T(X,H-8,(twoSt?('FLOOR '+floor):'FLOOR PLAN')+' \u00b7 schematic \u2014 not for construction',{z:8,f:'#5e7080'});
+  s+='</svg>';
+  return s;
+}
+
+/* ============ TH PLATE ============ */
+function thPlate(M,floor,showMEP){
+  const maxW=560,pad=30;
+  const sc=Math.min((maxW-pad*2)/M.bw, 300/M.bd);
+  const W=M.bw*sc+pad*2,H=M.bd*sc+pad*2+34;
+  const X=pad,Y=pad;
+  const n=M.units, uw=M.bw/n;
+  let s=svgOpen(W,H);
+  s+=R(X,Y,M.bw*sc,M.bd*sc,{s:'#60a5fa',sw:2});
+  for(let i=0;i<n;i++){
+    const ux=X+i*uw*sc;
+    if(i>0) s+=L(ux,Y,ux,Y+M.bd*sc,{s:'#3a4757',sw:2});
+    const label=floor===1?'LIVING + KITCHEN':(($('thBeds').value||3)+' BEDS + BATHS');
+    s+=T(ux+uw*sc/2,Y+M.bd*sc/2-3,'UNIT '+(i+1),{a:'middle',z:8.5,f:'#cfd9e4',w:700});
+    s+=T(ux+uw*sc/2,Y+M.bd*sc/2+9,label,{a:'middle',z:7.5,f:'#96a6b6'});
+    s+=T(ux+uw*sc/2,Y+12,Math.round(uw)+"' wide",{a:'middle',z:7,f:'#5e7080'});
+  }
+  if(showMEP){
+    // shared wet walls at party walls (back-to-back baths/kitchens)
+    for(let i=1;i<n;i+=1){
+      const ux=X+i*uw*sc;
+      s+=L(ux,Y+M.bd*sc*0.35,ux,Y+M.bd*sc*0.75,{s:'#2dd4bf',sw:3});
+    }
+    s+=T(X+M.bw*sc/2,Y+M.bd*sc+14,'teal party walls = back-to-back plumbing (cost saver)',{a:'middle',z:7.5,f:'#2dd4bf'});
+  }
+  s+=T(X,H-6,'FLOOR '+floor+' \u00b7 schematic \u2014 not for construction',{z:8,f:'#5e7080'});
+  s+='</svg>';
+  return s;
+}
+
+/* ============ MF PLATE ============ */
+function mfPlate(M,floor,showMEP){
+  const maxW=560,pad=30;
+  const sc=Math.min((maxW-pad*2)/M.bw, 320/M.bd);
+  const W=M.bw*sc+pad*2,H=M.bd*sc+pad*2+34;
+  const X=pad,Y=pad;
+  const corr=6, ud=(M.bd-corr)/2;
+  const mix=window.__MIX||{st:0,b1:0,b2:0,b3:0};
+  // per-floor allocation
+  const per={};
+  ['st','b1','b2','b3'].forEach(k=>{
+    const base=Math.floor(mix[k]/M.stories), extra=mix[k]%M.stories;
+    per[k]=base+(floor<=extra?1:0);
+  });
+  const coreW=16, elev=M.stories>=3;
+  let s=svgOpen(W,H);
+  s+=R(X,Y,M.bw*sc,M.bd*sc,{s:'#60a5fa',sw:2});
+  // cores
+  s+=R(X,Y,coreW*sc,M.bd*sc,{f:'rgba(94,112,128,.15)',s:'#3a4757',sw:1});
+  s+=T(X+coreW*sc/2,Y+M.bd*sc/2,'STAIR',{a:'middle',z:7.5,f:'#96a6b6',r:-90});
+  s+=R(X+M.bw*sc-coreW*sc,Y,coreW*sc,M.bd*sc,{f:'rgba(94,112,128,.15)',s:'#3a4757',sw:1});
+  s+=T(X+M.bw*sc-coreW*sc/2,Y+M.bd*sc/2,'STAIR',{a:'middle',z:7.5,f:'#96a6b6',r:-90});
+  // corridor
+  const cy=Y+ud*sc;
+  s+=R(X+coreW*sc,cy,(M.bw-2*coreW)*sc,corr*sc,{f:'rgba(96,165,250,.08)'});
+  s+=T(X+M.bw*sc/2,cy+corr*sc/2+3,'CORRIDOR',{a:'middle',z:7.5,f:'#60a5fa'});
+  // build unit list for this floor
+  let list=[];
+  for(let i=0;i<per.b3;i++)list.push(['3BR',UNITSZ.b3]);
+  for(let i=0;i<per.b2;i++)list.push(['2BR',UNITSZ.b2]);
+  for(let i=0;i<per.b1;i++)list.push(['1BR',UNITSZ.b1]);
+  for(let i=0;i<per.st;i++)list.push(['ST',UNITSZ.st]);
+  if(floor===1&&elev===false){}
+  // lobby on floor 1
+  let avail=M.bw-2*coreW;
+  let rows=[[],[]]; let used=[0,0];
+  if(floor===1){ rows[0].push(['LOBBY / MAIL',260]); used[0]+=260/ud; }
+  if(elev){ rows[1].push(['ELEV',80]); used[1]+=80/ud; }
+  list.forEach(u=>{
+    const w=u[1]/ud;
+    const r=used[0]<=used[1]?0:1;
+    if(used[r]+w<=avail+0.01){rows[r].push(u);used[r]+=w;}
+    else if(used[1-r]+w<=avail+0.01){rows[1-r].push(u);used[1-r]+=w;}
+    else rows[2]=rows[2]||[],rows[2].push(u);
+  });
+  const drawRow=(row,top)=>{
+    let cx=X+coreW*sc;
+    row.forEach(u=>{
+      const w=(u[1]/ud)*sc;
+      const y=top?Y:cy+corr*sc;
+      s+=R(cx,y,w,ud*sc,{s:'#3a4757',sw:1});
+      s+=T(cx+w/2,y+ud*sc/2-2,u[0],{a:'middle',z:8,f:'#cfd9e4',w:600});
+      s+=T(cx+w/2,y+ud*sc/2+9,fk(u[1])+' SF',{a:'middle',z:6.8,f:'#5e7080'});
+      cx+=w;
+    });
+  };
+  drawRow(rows[0],true); drawRow(rows[1],false);
+  if(showMEP){
+    // wet stack markers between back-to-back kitchens/baths along corridor walls
+    s+=L(X+coreW*sc,cy,X+M.bw*sc-coreW*sc,cy,{s:'#2dd4bf',sw:2.5});
+    s+=L(X+coreW*sc,cy+corr*sc,X+M.bw*sc-coreW*sc,cy+corr*sc,{s:'#2dd4bf',sw:2.5});
+    s+=T(X+M.bw*sc/2,Y+12,'stack wet walls along corridor \u2014 units plumb back-to-back floor over floor',{a:'middle',z:7,f:'#2dd4bf'});
+    // mech/utility
+    s+=mep(X+M.bw*sc-coreW*sc-12,Y+M.bd*sc-12,'E');
+    s+=T(X+M.bw*sc-coreW*sc-22,Y+M.bd*sc-9,'meter / utility rm',{a:'end',z:6.8,f:'#5e7080'});
+  }
+  const over=rows[2]&&rows[2].length;
+  s+=T(X,H-6,'FLOOR '+floor+' \u00b7 schematic \u2014 not for construction'+(over?' \u00b7 \u26a0 '+rows[2].length+' unit(s) don\u2019t fit this plate':''),{z:8,f:over?'#eab308':'#5e7080'});
+  s+='</svg>';
+  return s;
+}
+
+/* ============ RENDER ============ */
+function run(){
+  const M=model();
+  const out=$('results');
+  const nm=($('pname').value||'').trim()||'Untitled scheme';
+  if(!M.lotW||!M.lotD){out.innerHTML='<div class="card"><h4>Waiting on the lot</h4><p style="color:var(--dim);font-size:13.5px">Enter lot width and depth &mdash; or load the example &mdash; and the site plan draws itself here.</p></div>';return;}
+
+  const flags=M.flags.map(f=>`<div class="flag ${f.t==='err'?'err':''}">${f.m}</div>`).join('');
+
+  /* plates by type */
+  const plateFn = TYPE==='sfh'?sfhPlate : TYPE==='th'?thPlate : mfPlate;
+  const nPlates = TYPE==='sfh'?M.stories : TYPE==='th'?2 : M.stories;
+  let plates='';
+  for(let f=1;f<=nPlates;f++){
+    const locked = !S.pro && f>1;
+    const showMEP = S.mep && S.pro;
+    plates+=`<div class="card"><h4>Floor plate ${nPlates>1?f:''} <span class="sub">${TYPE==='sfh'?'single-family schematic':(TYPE==='th'?'townhouse row':'double-loaded corridor')}</span></h4>
+      <div class="planwrap">${locked?'':plateFn(M,f,showMEP)}
+        ${!S.pro&&f===1?'<div class="wm"><span>SITESHAPER PREVIEW</span></div>':''}
+        ${locked?`<div style="height:150px"></div><div class="lockover"><b>&#128274; Floor ${f} is in the full scheme</b><span>Unlock every plate, the MEP location layer, and the printable scheme book.</span><button class="lockbtn" onclick="openPro()">Unlock &mdash; ${PRICE_TXT}</button></div>`:''}
+      </div>
+      ${f===1&&S.pro&&S.mep&&TYPE==='sfh'?MEP_LEGEND:''}
+    </div>`;
+  }
+
+  const mepToggle = `<div class="togglerow">
+    <button class="tgl ${S.mep&&S.pro?'on':''} ${S.pro?'':'lockedtgl'}" onclick="toggleMEP()">${S.pro?'':'&#128274; '}MEP locations ${S.mep&&S.pro?'ON':'OFF'}</button>
+    <span class="mini" style="margin:0">${S.pro?'Plumbing groups, panel, HVAC, water heater, condenser + wet walls':'MEP layer unlocks with full access'}</span>
+  </div>`;
+
+  const est = TYPE==='mf' ? `<tr><td>Efficiency (net / gross)</td><td>${Math.round(M.net/M.gsf*100)}%</td></tr>` : '';
+  const numbers=`<table>
+    <tr><th>Metric</th><th style="text-align:right">Value</th></tr>
+    <tr><td>Lot</td><td>${M.lotW}' \u00d7 ${M.lotD}' \u00b7 ${fk(M.lotW*M.lotD)} SF (${M.acres.toFixed(2)} ac)</td></tr>
+    <tr><td>Buildable envelope</td><td>${Math.round(M.envW)}' \u00d7 ${Math.round(M.envD)}' \u00b7 ${fk(M.envW*M.envD)} SF</td></tr>
+    <tr><td>Footprint</td><td>${Math.round(M.bw)}' \u00d7 ${Math.round(M.bd)}' \u00b7 ${fk(M.foot)} SF</td></tr>
+    <tr><td>Lot coverage</td><td>${Math.round(M.cov*100)}%</td></tr>
+    <tr><td>Gross area (GSF)</td><td>${fk(M.gsf)} SF \u00b7 ${M.stories} ${M.stories>1?'stories':'story'}</td></tr>
+    <tr><td>FAR</td><td>${M.far.toFixed(2)}</td></tr>
+    <tr><td>Homes / units</td><td>${M.units} \u00b7 ${M.dua?M.dua.toFixed(1):'\u2014'} per acre</td></tr>
+    ${est}
+    <tr><td>Parking</td><td>${M.stalls} stalls \u00b7 ~${fk(M.parkSF)} SF (${PARK==='drive'?'driveway':'surface'})</td></tr>
+    <tr><td>Est. building height</td><td>~${M.stories*11+4} ft</td></tr>
+  </table>`;
+
+  out.innerHTML=`
+    <div class="card"><h4>Site plan <span class="sub">${esc(nm)}</span></h4>
+      <div class="planwrap">${sitePlan(M)}</div>
+      ${flags}
+    </div>
+    ${mepToggle}
+    ${plates}
+    <div class="card"><h4>The numbers</h4>${numbers}
+      <p class="mini" style="margin-top:9px">Schematic yields from standard planning assumptions \u2014 confirm all areas, heights, and requirements with your design professionals and local code.</p></div>
+    <div class="rowbtns">
+      <button class="smallbtn" id="printBtn">&#128424; Print scheme book ${S.pro?'':'&#128274;'}</button>
+      <a class="smallbtn" href="https://nesoai.github.io/buildbrief/" target="_blank" rel="noopener">&#128203; Write the intent brief (BuildBrief)</a>
+      <a class="smallbtn" href="https://nesoai.github.io/proforma/" target="_blank" rel="noopener">&#128200; Run the numbers (ProForma)</a>
+    </div>
+    <div class="cta-neso"><p><b>Want planner eyes on the scheme?</b> NESO&rsquo;s feasibility practice \u2014 urban planners and an engineer who speak fluent architect \u2014 pressure-tests the program, zoning path, and numbers before you spend design fees.</p><a href="${NESO_CTA}" target="_blank" rel="noopener">Have NESO review it &rarr;</a></div>`;
+
+  $('printBtn').onclick=()=>{ if(!S.pro) return openPro('The printable scheme book is part of full access:'); window.print(); };
+}
+function toggleMEP(){ if(!S.pro) return openPro('The MEP location layer is part of full access:'); S.mep=!S.mep; save(); run(); }
+
+/* ============ EXAMPLE ============ */
+function loadExample(){
+  $('pname').value='Juniper Court';
+  TYPE='sfh'; GAR='2'; PARK='drive';
+  segInit('typeRow',TYPES,()=>TYPE,v=>TYPE=v);
+  segInit('garRow',GARS,()=>GAR,v=>GAR=v);
+  segInit('parkRow',PARKS,()=>PARK,v=>PARK=v);
+  onType();
+  $('lotW').value=62;$('lotD').value=125;$('sbF').value=20;$('sbS').value=7;$('sbR').value=20;
+  $('beds').value=4;$('baths').value=2.5;$('sfhStories').value=2;$('sfhSF').value=2100;
+  $('pratio').value=2;$('offF').value=0;$('offS').value=0;
+  run();
+  $('exBanner').style.display='block';
+  toast('Example loaded \u2014 reshape it into your project');
+  try{ if(typeof gtag==='function') gtag('event','example_load',{tool:'siteshaper'}); }catch(e){}
+}
+$('exBtn').onclick=loadExample;
+
+/* ============ PRO ============ */
+const REDEEM_URL='https://neso-pro.nesoai-us.workers.dev/redeem';
+async function redeemCode(c){
+  c=(c||'').trim().toUpperCase();
+  if(!/^SSH-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(c)) return {ok:false,msg:'That code doesn\u2019t look right'};
+  try{
+    const r=await fetch(REDEEM_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'siteshaper',code:c})});
+    const j=await r.json();
+    if(j.ok) return {ok:true};
+    if(j.reason==='used') return {ok:false,msg:'That code has already been used'};
+    return {ok:false,msg:'That code doesn\u2019t look right'};
+  }catch(e){ return {ok:false,msg:'Couldn\u2019t reach the unlock server \u2014 check your connection and try again'}; }
+}
+function openModal(t,b){$('mTitle').textContent=t;$('mBody').innerHTML=b;$('modal').classList.add('on');}
+$('mClose').onclick=()=>$('modal').classList.remove('on');
+$('modal').onclick=e=>{if(e.target.id==='modal')$('modal').classList.remove('on');};
+function openPro(msg){
+  openModal('SiteShaper — full access',`<p>${msg||'One unlock, yours forever on this device:'}</p>
+   <ul style="color:var(--dim);font-size:13.5px;line-height:1.9;padding-left:18px;margin:8px 0 14px">
+     <li>Every floor plate (free previews the ground floor)</li>
+     <li>The MEP location layer &mdash; plumbing groups, panel, HVAC, water heater, condenser &amp; wet walls</li>
+     <li>The printable scheme book &mdash; watermark-free, ready to hand to your architect</li>
+     <li>All three building types: single-family, townhouse rows, multifamily</li></ul>
+   <a class="lockbtn" href="${BUY_URL}" target="_blank" rel="noopener">Get full access &mdash; ${PRICE_TXT} &rarr;</a>
+   <div style="display:flex;gap:8px;align-items:center;margin-top:14px">
+     <input class="tin" id="codeIn" placeholder="SSH-XXXX-XXXX" style="flex:1">
+     <button class="lockbtn" id="applyCode" style="background:var(--green);color:#04211a;margin:0">Apply</button></div>`);
+  $('applyCode').onclick=async()=>{const b=$('applyCode');b.disabled=true;b.textContent='\u2026';
+    const r=await redeemCode($('codeIn').value);b.disabled=false;b.textContent='Apply';
+    if(r.ok){S.pro=true;save();proUI();$('modal').classList.remove('on');toast('\ud83c\udf89 Full access unlocked');run();}
+    else toast(r.msg);};
+}
+function proUI(){$('proBtn').textContent=S.pro?'\u2713 Full access':'Unlock full access';$('proBtn').className='pill '+(S.pro?'prodone':'pro');}
+$('proBtn').onclick=()=>S.pro?toast('Full access is active on this device \u2713'):openPro();
+
+/* ============ TOUR ============ */
+const TOUR=[
+ ['lotW','Step 1 of 5','Start with <b>the lot and setbacks</b> \u2014 the dashed buildable envelope draws itself, and everything must fit inside it. This is the conversation zoning actually has with your project.'],
+ ['typeRow','Step 2 of 5','<b>Pick the building type.</b> Single-family gets full room-by-room plates with MEP locations; townhouse rows and multifamily get unit layouts, cores, and corridors.'],
+ ['sfhSF','Step 3 of 5','<b>Set the program</b> \u2014 beds, baths, stories, area. SiteShaper computes the footprint and warns you the moment something doesn\u2019t fit the envelope.'],
+ ['out','Step 4 of 5','The <b>scheme draws live</b>: site plan with dimensions, floor plates with room sizes, wet walls and MEP markers (full access), and the numbers table your pro will ask for.'],
+ ['exBtn','Step 5 of 5','Fastest way to learn it: <b>load Juniper Court</b> and reshape it. Then print the scheme book and hand it across the table. Nothing you enter leaves this device.']
+];
+let tourI=-1;
+function tourClear(){document.querySelectorAll('.tourhl').forEach(e=>e.classList.remove('tourhl'));}
+function tourShow(i){
+  tourClear();
+  if(i>=TOUR.length){ $('tourCard').classList.remove('on'); try{localStorage.setItem('siteshaper.tour','done')}catch(e){}; return; }
+  tourI=i; const [id,st,tx]=TOUR[i];
+  const el=$(id); if(el){ el.classList.add('tourhl'); el.scrollIntoView({behavior:'smooth',block:'center'}); }
+  $('tourStep').textContent=st; $('tourText').innerHTML=tx;
+  $('tourNext').textContent = i===TOUR.length-1 ? 'Done' : 'Next';
+  $('tourCard').classList.add('on');
+}
+$('tourNext').onclick=()=>tourShow(tourI+1);
+$('tourSkip').onclick=()=>tourShow(TOUR.length);
+$('tourBtn').onclick=()=>tourShow(0);
+setTimeout(()=>{ try{ if(!localStorage.getItem('siteshaper.tour')) tourShow(0); }catch(e){} },1100);
+
+onType(); proUI(); run();
+</script>
+</body></html>

@@ -30,7 +30,7 @@ header{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:
 .tagline h1 em{font-style:italic;color:var(--blue)}
 .tagline p{color:var(--dim);font-size:13.5px;margin:6px auto 0;max-width:80ch}
 .flow{display:flex;align-items:stretch;gap:0;max-width:980px;margin:14px auto 0;padding:0 16px}
-.flow .fstep{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;text-align:left;display:flex;gap:10px;align-items:flex-start;min-width:0}
+.flow .fstep{flex:1;background:linear-gradient(140deg,rgba(96,165,250,.14),var(--card) 55%);border:1px solid rgba(96,165,250,.35);border-radius:12px;padding:11px 13px;text-align:left;display:flex;gap:10px;align-items:flex-start;min-width:0}
 .flow .fn{width:24px;height:24px;border-radius:50%;background:var(--blue);color:#081226;font-weight:800;font-size:12.5px;display:grid;place-items:center;flex-shrink:0;margin-top:1px}
 .flow .ft b{display:block;font-size:12.5px;color:var(--ink)}
 .flow .ft span{font-size:11.5px;color:var(--dim);line-height:1.45}
@@ -74,6 +74,13 @@ th{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--fa
 .lockbtn{display:inline-block;border:none;border-radius:9px;background:var(--gold);color:#221a03;font-weight:700;font-size:12.5px;padding:9px 15px;cursor:pointer;font-family:inherit;text-decoration:none}
 .wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:4}
 .wm span{transform:rotate(-24deg);font-family:Fraunces,serif;font-size:34px;color:rgba(150,166,182,.16);font-weight:700;letter-spacing:.08em;white-space:nowrap}
+.edtb{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 9px}
+.edtb button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.edtb button:hover{border-color:var(--blue)}
+.edtb button.warn{color:var(--bad)}
+.edtb button.pri{background:var(--blue);border-color:var(--blue);color:#081226;font-weight:700}
+.edhint{font-size:11.5px;color:var(--faint);margin-top:8px}
+.room-sel{cursor:move}
 .mep-legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:11.5px;color:var(--dim);margin-top:9px}
 .mep-legend span{display:inline-flex;align-items:center;gap:6px}
 .rowbtns{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px}
@@ -141,6 +148,8 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 
     <label class="lbl">Project name</label>
     <input class="tin" id="pname" placeholder="e.g. Juniper Court">
+    <label class="lbl">Address</label>
+    <input class="tin" id="paddr" placeholder="Street address, city, ST (optional)">
 
     <label class="lbl">Project type</label>
     <div class="segrow" id="typeRow"></div>
@@ -222,7 +231,7 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
   <div id="out"><div id="results"></div></div>
 </div>
 
-<footer><span class="np">SiteShaper &middot; a <a href="https://nesoai.github.io/mallory/" target="_blank" rel="noopener">Boundless</a> tool &middot; v1.0 &middot; &copy; 2026 Boundless / Mallory Bailey-Finkley &mdash; all rights reserved &middot; <a href="https://tally.so/r/rj1Z15?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://nesoai.github.io/buildbrief/">BuildBrief</a> + <a href="https://nesoai.github.io/proforma/">ProForma</a>.</footer>
+<footer><span class="np">SiteShaper &middot; a <a href="https://nesoai.github.io/mallory/" target="_blank" rel="noopener">Boundless</a> tool &middot; v1.1 &middot; &copy; 2026 Boundless / Mallory Bailey-Finkley &mdash; all rights reserved &middot; <a href="https://tally.so/r/rj1Z15?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://nesoai.github.io/buildbrief/">BuildBrief</a> + <a href="https://nesoai.github.io/proforma/">ProForma</a>.</footer>
 <div id="modal"><div id="mcard"><button class="closex" id="mClose">&times;</button><h2 id="mTitle"></h2><div id="mBody"></div></div></div>
 <div id="toast"></div>
 <div id="tourCard" role="dialog" aria-label="Guided tour">
@@ -233,7 +242,7 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 
 <script>
 /* ============ SITESHAPER v1.0 (Phase A) ============ */
-const BUY_URL="mailto:nesoai.us@gmail.com?subject="+encodeURIComponent("Requesting SiteShaper full access ($199 founding price)")+"&body="+encodeURIComponent("Hi Boundless — I'd like SiteShaper full access. Please send my unlock code and how to pay."); // ← swap for Gumroad when live
+const BUY_URL="https://nesoai.gumroad.com/l/uutuy";
 const PRICE_TXT="$199 founding price";
 const NESO_CTA="https://tally.so/r/q4MLYg?track=re&services="+encodeURIComponent("Development Feasibility (Standard)")+"&credits=12&source=siteshaper";
 
@@ -257,14 +266,14 @@ function segInit(rowId,items,get,set){
 segInit('typeRow',TYPES,()=>TYPE,v=>TYPE=v);
 segInit('garRow',GARS,()=>GAR,v=>GAR=v);
 segInit('parkRow',PARKS,()=>PARK,v=>PARK=v);
-function onType(){
+function onType(){ EDIT={on:false,floor:0,sel:-1};
   $('progSFH').style.display=TYPE==='sfh'?'':'none';
   $('progTH').style.display=TYPE==='th'?'':'none';
   $('progMF').style.display=TYPE==='mf'?'':'none';
   if(TYPE==='sfh'&&PARK!=='drive'){PARK='drive';segInit('parkRow',PARKS,()=>PARK,v=>PARK=v);}
   if(TYPE!=='sfh'&&PARK!=='surface'){PARK='surface';segInit('parkRow',PARKS,()=>PARK,v=>PARK=v);}
 }
-['pname','lotW','lotD','sbF','sbS','sbR','beds','baths','sfhStories','sfhSF','thUnits','thBeds','mSt','m1','m2','m3','mfStories','pratio','offF','offS'].forEach(id=>{const e=$(id); if(e) e.oninput=()=>run();});
+['pname','paddr','lotW','lotD','sbF','sbS','sbR','beds','baths','sfhStories','sfhSF','thUnits','thBeds','mSt','m1','m2','m3','mfStories','pratio','offF','offS'].forEach(id=>{const e=$(id); if(e) e.oninput=()=>run();});
 $('runBtn').onclick=()=>{run();const r=$('results');if(r&&r.scrollIntoView)r.scrollIntoView({behavior:'smooth',block:'start'});};
 
 /* ============ GEOMETRY MODEL ============ */
@@ -398,82 +407,146 @@ const MEP_LEGEND=`<div class="mep-legend">
  <span><svg width="16" height="12"><rect x="1" y="2" width="14" height="8" fill="none" stroke="#f472b6" stroke-width="1.4" stroke-dasharray="2 2"/></svg> Condenser (exterior)</span>
  <span style="color:#2dd4bf">&#9473;&#9473; Plumbing wet wall</span></div>`;
 
-/* ============ SFH FLOOR PLATES ============ */
-function bandLayout(rooms,x,y,w,h,sc,showMEP){
-  // rooms: [{n,wt,mep:[..]}] laid left→right proportionally
-  const tot=rooms.reduce((a,r)=>a+r.wt,0);
-  let cx=x, out='';
-  rooms.forEach(r=>{
-    const rw=w*r.wt/tot;
-    out+=R(cx,y,rw,h,{s:'#3a4757',sw:1});
-    const ftW=Math.round(rw/sc), ftD=Math.round(h/sc);
-    out+=T(cx+rw/2,y+h/2-3,r.n,{a:'middle',z:8,f:'#cfd9e4',w:600});
-    out+=T(cx+rw/2,y+h/2+8,ftW+"'\u00d7"+ftD+"'",{a:'middle',z:7,f:'#5e7080'});
-    if(showMEP&&r.mep) r.mep.forEach((k,i)=>{ out+=mep(cx+10+i*14, y+11, k); });
-    r._x=cx; r._w=rw;
-    cx+=rw;
-  });
+/* ============ SFH FLOOR PLATES (rooms model + custom editor) ============ */
+function mepFor(name){
+  const n=name.toUpperCase();
+  if(/GARAGE/.test(n)) return ['E','W','H'];
+  if(/KITCHEN/.test(n)) return ['P'];
+  if(/BATH|POWDER/.test(n)) return ['P'];
+  if(/LAUNDRY|MUD|UTILITY/.test(n)) return ['P'];
+  return null;
+}
+function bandRooms(list,y,h,bw){ // list:[{n,wt}] -> rooms in ft
+  const tot=list.reduce((a,r)=>a+r.wt,0);
+  let x=0; const out=[];
+  list.forEach(r=>{ const w=bw*r.wt/tot; out.push({n:r.n,x:+x.toFixed(1),y:+y.toFixed(1),w:+w.toFixed(1),h:+h.toFixed(1)}); x+=w; });
   return out;
 }
+function sfhAutoRooms(M,floor){
+  const beds=Math.max(1,+$('beds').value||3), baths=+$('baths').value||2;
+  const twoSt=M.stories===2;
+  const fh=+(M.bd*0.46).toFixed(1), rh=+(M.bd-fh).toFixed(1);
+  let front=[],rear=[];
+  if(!twoSt){
+    if(M.garW) front.push({n:'GARAGE',wt:M.garW});
+    front.push({n:'ENTRY',wt:8},{n:'LIVING',wt:16},{n:'KITCHEN / DINING',wt:15});
+    rear.push({n:'PRIMARY BED',wt:14},{n:'PRIMARY BATH',wt:7});
+    for(let b=2;b<=beds;b++) rear.push({n:'BED '+b,wt:11});
+    if(baths>=2) rear.splice(3,0,{n:'BATH 2',wt:6});
+    rear.push({n:'LAUNDRY',wt:6});
+  } else if(floor===1){
+    if(M.garW) front.push({n:'GARAGE',wt:M.garW});
+    front.push({n:'ENTRY / FOYER',wt:9},{n:'LIVING',wt:16});
+    rear.push({n:'KITCHEN / DINING',wt:16},{n:'POWDER',wt:5},{n:'LAUNDRY / MUD',wt:7},{n:'FLEX / STUDY',wt:10});
+  } else {
+    front.push({n:'BED 2',wt:11});
+    if(baths>=2) front.push({n:'BATH 2',wt:6});
+    for(let b=3;b<=beds;b++) front.push({n:'BED '+b,wt:11});
+    rear.push({n:'PRIMARY BED',wt:15},{n:'PRIMARY BATH',wt:7},{n:'W.I.C.',wt:6},{n:'HALL / STAIR',wt:6});
+  }
+  return [...bandRooms(front,0,fh,M.bw), ...bandRooms(rear,fh,rh,M.bw)];
+}
+if(!S.layouts) S.layouts={};
+let EDIT={on:false,floor:0,sel:-1};
+const layKey=f=>'sfh:'+f+':'+Math.round(model().bw)+'x'+Math.round(model().bd);
+function roomsFor(M,floor){ const k=layKey(floor); return S.layouts[k]?S.layouts[k]:sfhAutoRooms(M,floor); }
+function isCustom(floor){ return !!S.layouts[layKey(floor)]; }
+
 function sfhPlate(M,floor,showMEP){
   const maxW=560,pad=30;
   const sc=Math.min((maxW-pad*2)/M.bw, 300/M.bd);
+  const editing=EDIT.on&&EDIT.floor===floor;
+  const rooms=editing?S.layouts[layKey(floor)]:roomsFor(M,floor);
   const W=M.bw*sc+pad*2, H=M.bd*sc+pad*2+40;
   const X=pad,Y=pad;
-  const beds=Math.max(1,+$('beds').value||3), baths=+$('baths').value||2;
-  const twoSt=M.stories===2;
-  let s=svgOpen(W,H);
-  s+=R(X,Y,M.bw*sc,M.bd*sc,{s:'#60a5fa',sw:2});
-  const frontH=M.bd*sc*0.46, rearH=M.bd*sc-frontH;
-  let front=[],rear=[];
-  if(!twoSt){ // single story
-    if(M.garW) front.push({n:'GARAGE',wt:M.garW,mep:showMEP?['E','W','H']:null});
-    front.push({n:'ENTRY',wt:8});
-    front.push({n:'LIVING',wt:16});
-    front.push({n:'KITCHEN / DINING',wt:15,mep:showMEP?['P']:null});
-    rear.push({n:'PRIMARY BED',wt:14});
-    rear.push({n:'PRIMARY BATH',wt:7,mep:showMEP?['P']:null});
-    for(let b=2;b<=beds;b++) rear.push({n:'BED '+b,wt:11});
-    if(baths>=2) rear.splice(3,0,{n:'BATH 2',wt:6,mep:showMEP?['P']:null});
-    rear.push({n:'LAUNDRY',wt:6,mep:showMEP?['P']:(null)});
-    if(!M.garW&&showMEP) rear[rear.length-1].mep=['P','E','W','H'];
-  } else if(floor===1){
-    if(M.garW) front.push({n:'GARAGE',wt:M.garW,mep:showMEP?['E','W','H']:null});
-    front.push({n:'ENTRY / FOYER',wt:9});
-    front.push({n:'LIVING',wt:16});
-    rear.push({n:'KITCHEN / DINING',wt:16,mep:showMEP?['P']:null});
-    rear.push({n:'POWDER',wt:5,mep:showMEP?['P']:null});
-    rear.push({n:'LAUNDRY / MUD',wt:7,mep:showMEP?['P']:null});
-    rear.push({n:'FLEX / STUDY',wt:10});
-    if(!M.garW&&showMEP) rear[2].mep=['P','E','W','H'];
-  } else { // floor 2
-    front.push({n:'BED 2',wt:11});
-    if(baths>=2) front.push({n:'BATH 2',wt:6,mep:showMEP?['P']:null});
-    for(let b=3;b<=beds;b++) front.push({n:'BED '+b,wt:11});
-    rear.push({n:'PRIMARY BED',wt:15});
-    rear.push({n:'PRIMARY BATH',wt:7,mep:showMEP?['P']:null});
-    rear.push({n:'W.I.C.',wt:6});
-    rear.push({n:'HALL / STAIR',wt:6});
-  }
-  s+=bandLayout(front,X,Y,M.bw*sc,frontH,sc,showMEP);
-  s+=bandLayout(rear,X,Y+frontH,M.bw*sc,rearH,sc,showMEP);
-  // wet wall along band divider spanning plumbing rooms
-  if(showMEP){
-    const wet=[...front,...rear].filter(r=>r.mep&&r.mep.includes('P'));
+  let s2=svgOpen(W,H).replace('<svg ',`<svg id="plateSvg${floor}" data-sc="${sc}" data-pad="${pad}" `);
+  s2+=R(X,Y,M.bw*sc,M.bd*sc,{s:'#60a5fa',sw:2});
+  rooms.forEach((r,i)=>{
+    const rx=X+r.x*sc, ry=Y+r.y*sc, rw=r.w*sc, rh=r.h*sc;
+    const plumb=mepFor(r.n)&&mepFor(r.n).includes('P');
+    const sel=editing&&EDIT.sel===i;
+    s2+=`<g class="room-sel" data-i="${i}">`;
+    s2+=R(rx,ry,rw,rh,{s:sel?'#eab308':(plumb&&showMEP?'#2dd4bf':'#3a4757'),sw:sel?2.2:(plumb&&showMEP?1.6:1),f:sel?'rgba(234,179,8,.06)':'none'});
+    s2+=T(rx+rw/2,ry+rh/2-3,esc(r.n),{a:'middle',z:8,f:'#cfd9e4',w:600});
+    s2+=T(rx+rw/2,ry+rh/2+8,Math.round(r.w)+"'\u00d7"+Math.round(r.h)+"'",{a:'middle',z:7,f:'#5e7080'});
+    if(showMEP){ const mk=mepFor(r.n); if(mk) mk.forEach((k,j)=>{ s2+=mep(rx+10+j*14, ry+11, k); }); }
+    if(editing) s2+=R(rx+rw-7,ry+rh-7,7,7,{f:'#eab308'});
+    s2+='</g>';
+  });
+  if(showMEP&&!editing&&!isCustom(floor)){
+    const wet=rooms.filter(r=>mepFor(r.n)&&mepFor(r.n).includes('P'));
     if(wet.length){
-      const x1=Math.min(...wet.map(r=>r._x)), x2=Math.max(...wet.map(r=>r._x+r._w));
-      s+=L(x1,Y+frontH,x2,Y+frontH,{s:'#2dd4bf',sw:3});
-      s+=T((x1+x2)/2,Y+frontH-5,'PLUMBING WET WALL',{a:'middle',z:7,f:'#2dd4bf',w:700});
+      const yBand=Math.min(...wet.map(r=>r.y));
+      const x1=X+Math.min(...wet.map(r=>r.x))*sc, x2=X+Math.max(...wet.map(r=>r.x+r.w))*sc;
+      s2+=L(x1,Y+yBand*sc,x2,Y+yBand*sc,{s:'#2dd4bf',sw:3});
+      s2+=T((x1+x2)/2,Y+yBand*sc-5,'PLUMBING WET WALL',{a:'middle',z:7,f:'#2dd4bf',w:700});
     }
-    // condenser outside rear wall
-    s+=mep(X+M.bw*sc-18,Y+M.bd*sc+12,'C');
-    s+=T(X+M.bw*sc-30,Y+M.bd*sc+15,'condenser pad',{a:'end',z:7,f:'#5e7080'});
   }
-  s+=T(X,H-8,(twoSt?('FLOOR '+floor):'FLOOR PLAN')+' \u00b7 schematic \u2014 not for construction',{z:8,f:'#5e7080'});
-  s+='</svg>';
-  return s;
+  if(showMEP){
+    s2+=mep(X+M.bw*sc-18,Y+M.bd*sc+12,'C');
+    s2+=T(X+M.bw*sc-30,Y+M.bd*sc+15,'condenser pad',{a:'end',z:7,f:'#5e7080'});
+  }
+  s2+=T(X,H-8,(M.stories===2?('FLOOR '+floor):'FLOOR PLAN')+(isCustom(floor)?' \u00b7 custom layout':'')+' \u00b7 schematic \u2014 not for construction',{z:8,f:'#5e7080'});
+  s2+='</svg>';
+  return s2;
 }
 
+/* ---- custom layout editor ---- */
+function enterEdit(floor){
+  if(!S.pro) return openPro('The custom layout editor is part of full access:');
+  const M=model(); const k=layKey(floor);
+  if(!S.layouts[k]) S.layouts[k]=JSON.parse(JSON.stringify(sfhAutoRooms(M,floor)));
+  EDIT={on:true,floor,sel:-1}; save(); run();
+}
+function exitEdit(){ EDIT={on:false,floor:0,sel:-1}; save(); run(); }
+function resetFloor(floor){ delete S.layouts[layKey(floor)]; EDIT={on:false,floor:0,sel:-1}; save(); run(); toast('Floor reset to auto layout'); }
+function edAdd(){ const k=layKey(EDIT.floor); const nm=prompt('Room name:','ROOM'); if(!nm)return;
+  S.layouts[k].push({n:nm.toUpperCase(),x:2,y:2,w:10,h:10}); EDIT.sel=S.layouts[k].length-1; save(); run(); }
+function edDup(){ const k=layKey(EDIT.floor); if(EDIT.sel<0)return toast('Select a room first');
+  const r=S.layouts[k][EDIT.sel]; S.layouts[k].push({n:r.n,x:Math.min(r.x+2,999),y:r.y+2,w:r.w,h:r.h});
+  EDIT.sel=S.layouts[k].length-1; save(); run(); toast('Duplicated \u2014 overlap same-name blocks to form L-shapes'); }
+function edRename(){ const k=layKey(EDIT.floor); if(EDIT.sel<0)return toast('Select a room first');
+  const nm=prompt('Room name:',S.layouts[k][EDIT.sel].n); if(!nm)return; S.layouts[k][EDIT.sel].n=nm.toUpperCase(); save(); run(); }
+function edDims(){ const k=layKey(EDIT.floor); if(EDIT.sel<0)return toast('Select a room first');
+  const r=S.layouts[k][EDIT.sel];
+  const v=prompt('Width x Depth in feet (e.g. 12x14):',Math.round(r.w)+'x'+Math.round(r.h)); if(!v)return;
+  const m=v.toLowerCase().split(/[x\u00d7]/); const w=parseFloat(m[0]),h=parseFloat(m[1]);
+  if(w>=3&&h>=3){r.w=w;r.h=h;save();run();} else toast('Minimum room size is 3\u00d73 ft'); }
+function edDel(){ const k=layKey(EDIT.floor); if(EDIT.sel<0)return toast('Select a room first');
+  S.layouts[k].splice(EDIT.sel,1); EDIT.sel=-1; save(); run(); }
+let DRAG=null;
+function bindEditor(floor){
+  const svg=document.getElementById('plateSvg'+floor); if(!svg)return;
+  const M=model(); const sc=+svg.dataset.sc, pad=+svg.dataset.pad;
+  const pt=e=>{ const r=svg.getBoundingClientRect();
+    const vs=svg.viewBox.baseVal; const k=vs.width/r.width;
+    return {x:((e.clientX-r.left)*k-pad)/sc, y:((e.clientY-r.top)*k-pad)/sc}; };
+  svg.addEventListener('pointerdown',e=>{
+    const g=e.target.closest('.room-sel'); const k=layKey(floor);
+    if(!g){EDIT.sel=-1;run();return;}
+    const i=+g.dataset.i; EDIT.sel=i;
+    const r=S.layouts[k][i]; const p=pt(e);
+    const onHandle=(p.x>r.x+r.w-2.2)&&(p.y>r.y+r.h-2.2);
+    DRAG={i,mode:onHandle?'resize':'move',dx:p.x-r.x,dy:p.y-r.y};
+    svg.setPointerCapture(e.pointerId);
+    run(); requestAnimationFrame(()=>bindEditor(floor));
+  });
+  svg.addEventListener('pointermove',e=>{
+    if(!DRAG)return; const k=layKey(floor); const r=S.layouts[k][DRAG.i]; if(!r)return;
+    const p=pt(e);
+    if(DRAG.mode==='move'){
+      r.x=Math.round(Math.max(0,Math.min(M.bw-r.w,p.x-DRAG.dx)));
+      r.y=Math.round(Math.max(0,Math.min(M.bd-r.h,p.y-DRAG.dy)));
+    } else {
+      r.w=Math.round(Math.max(3,Math.min(M.bw-r.x,p.x-r.x)));
+      r.h=Math.round(Math.max(3,Math.min(M.bd-r.y,p.y-r.y)));
+    }
+    const el=document.getElementById('plateSvg'+floor);
+    if(el){ const card=el.closest('.planwrap'); card.innerHTML=sfhPlate(M,floor,S.mep&&S.pro); bindEditor(floor); }
+  });
+  const up=e=>{ if(DRAG){DRAG=null;save();run();} };
+  svg.addEventListener('pointerup',up); svg.addEventListener('pointercancel',up);
+}
 /* ============ TH PLATE ============ */
 function thPlate(M,floor,showMEP){
   const maxW=560,pad=30;
@@ -592,11 +665,25 @@ function run(){
   for(let f=1;f<=nPlates;f++){
     const locked = !S.pro && f>1;
     const showMEP = S.mep && S.pro;
+    const editing = EDIT.on&&EDIT.floor===f&&TYPE==='sfh';
+    const edbar = TYPE!=='sfh'?'':(editing?
+      `<div class="edtb">
+         <button onclick="edAdd()">+ Add room</button>
+         <button onclick="edDup()">Duplicate (L-shape)</button>
+         <button onclick="edDims()">Set W×D&hellip;</button>
+         <button onclick="edRename()">Rename</button>
+         <button class="warn" onclick="edDel()">Delete</button>
+         <button onclick="resetFloor(${f})">Reset to auto</button>
+         <button class="pri" onclick="exitEdit()">Done editing</button>
+       </div>`
+      :`<div class="edtb"><button onclick="enterEdit(${f})">${S.pro?'':'&#128274; '}&#9998; Customize this floor${isCustom(f)?' (custom)':''}</button>${isCustom(f)&&S.pro?`<button onclick="resetFloor(${f})">Reset to auto</button>`:''}</div>`);
     plates+=`<div class="card"><h4>Floor plate ${nPlates>1?f:''} <span class="sub">${TYPE==='sfh'?'single-family schematic':(TYPE==='th'?'townhouse row':'double-loaded corridor')}</span></h4>
+      ${locked?'':edbar}
       <div class="planwrap">${locked?'':plateFn(M,f,showMEP)}
         ${!S.pro&&f===1?'<div class="wm"><span>SITESHAPER PREVIEW</span></div>':''}
-        ${locked?`<div style="height:150px"></div><div class="lockover"><b>&#128274; Floor ${f} is in the full scheme</b><span>Unlock every plate, the MEP location layer, and the printable scheme book.</span><button class="lockbtn" onclick="openPro()">Unlock &mdash; ${PRICE_TXT}</button></div>`:''}
+        ${locked?`<div style="height:150px"></div><div class="lockover"><b>&#128274; Floor ${f} is in the full scheme</b><span>Unlock every plate, the MEP location layer, the custom layout editor, and the printable scheme book.</span><button class="lockbtn" onclick="openPro()">Unlock &mdash; ${PRICE_TXT}</button></div>`:''}
       </div>
+      ${editing?'<div class="edhint">Click a room to select · drag to move · drag the gold corner to resize · duplicate + overlap same-name blocks to build L-shapes · 1-ft snap</div>':''}
       ${f===1&&S.pro&&S.mep&&TYPE==='sfh'?MEP_LEGEND:''}
     </div>`;
   }
@@ -622,7 +709,7 @@ function run(){
   </table>`;
 
   out.innerHTML=`
-    <div class="card"><h4>Site plan <span class="sub">${esc(nm)}</span></h4>
+    <div class="card"><h4>Site plan <span class="sub">${esc(nm)}${$('paddr').value?(' \u00b7 '+esc($('paddr').value)):''}</span></h4>
       <div class="planwrap">${sitePlan(M)}</div>
       ${flags}
     </div>
@@ -638,12 +725,14 @@ function run(){
     <div class="cta-neso"><p><b>Want planner eyes on the scheme?</b> NESO&rsquo;s feasibility practice \u2014 urban planners and an engineer who speak fluent architect \u2014 pressure-tests the program, zoning path, and numbers before you spend design fees.</p><a href="${NESO_CTA}" target="_blank" rel="noopener">Have NESO review it &rarr;</a></div>`;
 
   $('printBtn').onclick=()=>{ if(!S.pro) return openPro('The printable scheme book is part of full access:'); window.print(); };
+  if(EDIT.on&&TYPE==='sfh') bindEditor(EDIT.floor);
 }
 function toggleMEP(){ if(!S.pro) return openPro('The MEP location layer is part of full access:'); S.mep=!S.mep; save(); run(); }
 
 /* ============ EXAMPLE ============ */
 function loadExample(){
   $('pname').value='Juniper Court';
+  $('paddr').value='412 Juniper Ct, Fairfield, CT';
   TYPE='sfh'; GAR='2'; PARK='drive';
   segInit('typeRow',TYPES,()=>TYPE,v=>TYPE=v);
   segInit('garRow',GARS,()=>GAR,v=>GAR=v);
@@ -679,7 +768,7 @@ function openPro(msg){
   openModal('SiteShaper — full access',`<p>${msg||'One unlock, yours forever on this device:'}</p>
    <ul style="color:var(--dim);font-size:13.5px;line-height:1.9;padding-left:18px;margin:8px 0 14px">
      <li>Every floor plate (free previews the ground floor)</li>
-     <li>The MEP location layer &mdash; plumbing groups, panel, HVAC, water heater, condenser &amp; wet walls</li>
+     <li>The MEP location layer &mdash; plumbing groups, panel, HVAC, water heater, condenser &amp; wet walls</li>\n     <li>The custom layout editor &mdash; drag rooms, set exact dimensions, build L-shapes</li>
      <li>The printable scheme book &mdash; watermark-free, ready to hand to your architect</li>
      <li>All three building types: single-family, townhouse rows, multifamily</li></ul>
    <a class="lockbtn" href="${BUY_URL}" target="_blank" rel="noopener">Get full access &mdash; ${PRICE_TXT} &rarr;</a>

@@ -30,11 +30,11 @@ header{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:
 .tagline h1 em{font-style:italic;color:var(--blue)}
 .tagline p{color:var(--dim);font-size:13.5px;margin:6px auto 0;max-width:80ch}
 .flow{display:flex;align-items:stretch;gap:0;max-width:980px;margin:14px auto 0;padding:0 16px}
-.flow .fstep{flex:1;background:linear-gradient(140deg,rgba(96,165,250,.14),var(--card) 55%);border:1px solid rgba(96,165,250,.35);border-radius:12px;padding:11px 13px;text-align:left;display:flex;gap:10px;align-items:flex-start;min-width:0}
+.flow .fstep{flex:1;background:var(--blue);border:1px solid rgba(0,0,0,.12);border-radius:12px;padding:11px 13px;text-align:left;display:flex;gap:10px;align-items:flex-start;min-width:0}
 .flow .fn{width:24px;height:24px;border-radius:50%;background:var(--blue);color:#081226;font-weight:800;font-size:12.5px;display:grid;place-items:center;flex-shrink:0;margin-top:1px}
 .flow .ft b{display:block;font-size:12.5px;color:var(--ink)}
 .flow .ft span{font-size:11.5px;color:var(--dim);line-height:1.45}
-.flow .farrow{align-self:center;color:var(--faint);font-size:17px;padding:0 7px;flex-shrink:0}
+.flow .farrow{align-self:center;color:var(--faint);font-size:17px;padding:0 7px;flex-shrink:0}.flow .ft b{color:#0b1018}.flow .ft span{color:rgba(8,14,20,.75)}.flow .fn{background:rgba(10,15,20,.85);color:#fff}
 @media(max-width:700px){.flow{flex-direction:column;gap:6px}.flow .farrow{transform:rotate(90deg);align-self:center;padding:0}}
 #app{display:grid;grid-template-columns:400px 1fr;gap:22px;max-width:1240px;margin:22px auto 60px;padding:0 16px}
 @media(max-width:940px){#app{grid-template-columns:1fr}}
@@ -118,6 +118,28 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
  table,th,td{color:#000;border-color:#ccc}
  .flag{background:#fffbe6;border-color:#e0c96a;color:#333}
 }
+.probar{max-width:1240px;margin:16px auto -6px;padding:0 16px}
+.probarin{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.tier{background:var(--card);border:1.5px solid var(--line);border-radius:13px;padding:12px 15px;display:flex;flex-direction:column;gap:6px}
+.tier.own{border-color:var(--green)}
+.tier .tn{font-weight:800;font-size:13px;color:var(--ink)}
+.tier .tn i{font-style:normal;color:var(--blue);margin-left:6px}
+.tier .td{font-size:12px;color:var(--dim);line-height:1.5;flex:1}
+.tier button{border:none;border-radius:999px;background:var(--blue);color:#0b1018;font-weight:700;font-size:12.5px;padding:8px 14px;cursor:pointer;font-family:inherit;align-self:flex-start}
+.tier.own button{background:var(--card);color:var(--green);border:1px solid var(--green);cursor:default}
+.tier.t2 button{background:var(--gold)}
+.tier.t3 button{background:var(--teal)}
+.intelrow{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+.intelrow:last-child{border-bottom:none}
+.intelrow .st{width:22px;flex-shrink:0;text-align:center;font-size:15px;padding-top:1px}
+.intelrow .ib{flex:1;min-width:0}
+.intelrow .in{font-size:12.5px;font-weight:700;color:var(--ink)}
+.intelrow .isum{font-size:13px;color:var(--blue);font-weight:600;margin:1px 0 2px}
+.intelrow .idet{font-size:12px;color:var(--dim);line-height:1.5}
+.intelrow a{font-size:11.5px;white-space:nowrap;padding-top:2px}
+.intelnote{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.35);border-radius:9px;padding:9px 12px;font-size:12px;color:var(--dim);margin-top:11px}
+.intelnote b{color:var(--gold)}
+@media print{.probar{display:none!important}}
 </style>
 </head>
 <body>
@@ -141,6 +163,7 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
   <div class="fstep"><div class="fn">3</div><div class="ft"><b>Get the scheme book</b><span>Site plan, floor plates, MEP markers, numbers table &mdash; print it and hand it over.</span></div></div>
 </div>
 
+<div class="probar" id="probar"></div>
 <div id="app">
   <div id="inputs">
     <button class="exbtn" id="exBtn">&#9654; Load an example &mdash; see a finished scheme first</button>
@@ -231,7 +254,7 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
   <div id="out"><div id="results"></div></div>
 </div>
 
-<footer><span class="np">SiteShaper &middot; a <a href="https://nesoai.github.io/mallory/" target="_blank" rel="noopener">Boundless</a> tool &middot; v1.1 &middot; &copy; 2026 Boundless / Mallory Bailey-Finkley &mdash; all rights reserved &middot; <a href="https://tally.so/r/rj1Z15?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://nesoai.github.io/buildbrief/">BuildBrief</a> + <a href="https://nesoai.github.io/proforma/">ProForma</a>.</footer>
+<footer><span class="np">SiteShaper &middot; a <a href="https://nesoai.github.io/mallory/" target="_blank" rel="noopener">Boundless</a> tool &middot; v2.0 &middot; &copy; 2026 Boundless / Mallory Bailey-Finkley &mdash; all rights reserved &middot; <a href="https://tally.so/r/rj1Z15?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://nesoai.github.io/buildbrief/">BuildBrief</a> + <a href="https://nesoai.github.io/proforma/">ProForma</a>.</footer>
 <div id="modal"><div id="mcard"><button class="closex" id="mClose">&times;</button><h2 id="mTitle"></h2><div id="mBody"></div></div></div>
 <div id="toast"></div>
 <div id="tourCard" role="dialog" aria-label="Guided tour">
@@ -242,13 +265,18 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 
 <script>
 /* ============ SITESHAPER v1.0 (Phase A) ============ */
-const BUY_URL="https://nesoai.gumroad.com/l/uutuy";
+const BUY_DESIGN="https://nesoai.gumroad.com/l/uutuy";
+const BUY_EDITOR="mailto:nesoai.us@gmail.com?subject="+encodeURIComponent("Requesting SiteShaper Layout Editor ($29)")+"&body="+encodeURIComponent("Hi Boundless \u2014 I'd like the SiteShaper custom layout editor add-on. Please send my unlock code and how to pay."); // \u2190 swap for Gumroad when live
+const BUY_INTEL="mailto:nesoai.us@gmail.com?subject="+encodeURIComponent("Requesting SiteShaper Site Intelligence ($169)")+"&body="+encodeURIComponent("Hi Boundless \u2014 I'd like SiteShaper Site Intelligence. Please send my unlock code and how to pay."); // \u2190 swap for Gumroad when live
+const SITE_DATA="https://neso-site-data.nesoai-us.workers.dev/site";
 const PRICE_TXT="$199 founding price";
+const PRICE_EDITOR="$29";
+const PRICE_INTEL="$169";
 const NESO_CTA="https://tally.so/r/q4MLYg?track=re&services="+encodeURIComponent("Development Feasibility (Standard)")+"&credits=12&source=siteshaper";
 
 const $=id=>document.getElementById(id);
 const KEY='siteshaper.v1';
-let S=Object.assign({pro:false,mep:true},(()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}})());
+let S=Object.assign({pro:false,editor:false,intel:false,mep:true},(()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}})());
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function toast(t){const x=$('toast');x.textContent=t;x.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>x.classList.remove('on'),2600)}
 const esc=x=>String(x==null?'':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -493,7 +521,8 @@ function sfhPlate(M,floor,showMEP){
 
 /* ---- custom layout editor ---- */
 function enterEdit(floor){
-  if(!S.pro) return openPro('The custom layout editor is part of full access:');
+  if(!S.pro) return openPro('The Layout Editor works on the Design plates \u2014 unlock Design first:');
+  if(!S.editor) return openPro('The custom layout editor is a separate '+PRICE_EDITOR+' add-on:');
   const M=model(); const k=layKey(floor);
   if(!S.layouts[k]) S.layouts[k]=JSON.parse(JSON.stringify(sfhAutoRooms(M,floor)));
   EDIT={on:true,floor,sel:-1}; save(); run();
@@ -676,12 +705,12 @@ function run(){
          <button onclick="resetFloor(${f})">Reset to auto</button>
          <button class="pri" onclick="exitEdit()">Done editing</button>
        </div>`
-      :`<div class="edtb"><button onclick="enterEdit(${f})">${S.pro?'':'&#128274; '}&#9998; Customize this floor${isCustom(f)?' (custom)':''}</button>${isCustom(f)&&S.pro?`<button onclick="resetFloor(${f})">Reset to auto</button>`:''}</div>`);
+      :`<div class="edtb"><button onclick="enterEdit(${f})">${(S.pro&&S.editor)?'':'&#128274; '}&#9998; Customize this floor${isCustom(f)?' (custom)':''}</button>${isCustom(f)&&S.pro?`<button onclick="resetFloor(${f})">Reset to auto</button>`:''}</div>`);
     plates+=`<div class="card"><h4>Floor plate ${nPlates>1?f:''} <span class="sub">${TYPE==='sfh'?'single-family schematic':(TYPE==='th'?'townhouse row':'double-loaded corridor')}</span></h4>
       ${locked?'':edbar}
       <div class="planwrap">${locked?'':plateFn(M,f,showMEP)}
         ${!S.pro&&f===1?'<div class="wm"><span>SITESHAPER PREVIEW</span></div>':''}
-        ${locked?`<div style="height:150px"></div><div class="lockover"><b>&#128274; Floor ${f} is in the full scheme</b><span>Unlock every plate, the MEP location layer, the custom layout editor, and the printable scheme book.</span><button class="lockbtn" onclick="openPro()">Unlock &mdash; ${PRICE_TXT}</button></div>`:''}
+        ${locked?`<div style="height:150px"></div><div class="lockover"><b>&#128274; Floor ${f} is in the full scheme</b><span>Design (${PRICE_TXT}) unlocks every plate, the MEP layer, and the printable scheme book. Editor and Site Intelligence stack on top.</span><button class="lockbtn" onclick="openPro()">Unlock &mdash; ${PRICE_TXT}</button></div>`:''}
       </div>
       ${editing?'<div class="edhint">Click a room to select · drag to move · drag the gold corner to resize · duplicate + overlap same-name blocks to build L-shapes · 1-ft snap</div>':''}
       ${f===1&&S.pro&&S.mep&&TYPE==='sfh'?MEP_LEGEND:''}
@@ -708,11 +737,33 @@ function run(){
     <tr><td>Est. building height</td><td>~${M.stories*11+4} ft</td></tr>
   </table>`;
 
+  const intelCard = S.intel ? `
+    <div class="card"><h4>Site intelligence <span class="sub">6-layer federal screen \u00b7 preliminary</span></h4>
+      ${$('paddr').value.trim()?`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
+        <button class="smallbtn" id="intelBtn" onclick="runIntel()" style="border-color:var(--teal);color:var(--teal)">&#128225; Run site screen for ${esc($('paddr').value.trim())}</button>
+        <span class="mini" style="margin:0">Free federal sources \u00b7 cached 24h</span></div>`
+      :`<p style="font-size:13px;color:var(--dim)">Add the <b>address</b> in the left panel and the screen runs against six federal layers: flood, elevation &amp; slope, seismic, wetlands, soils, and disaster history.</p>`}
+      <div id="intelOut">${(window.__INTEL&&window.__INTEL.addr===$('paddr').value.trim())?window.__INTEL.html:''}</div>
+    </div>`
+  : `
+    <div class="card"><h4>Site intelligence <span class="sub">6-layer federal screen</span></h4>
+      <div style="position:relative"><div style="filter:blur(1px);opacity:.75">
+        <div class="intelrow"><div class="st">&#127754;</div><div class="ib"><div class="in">FEMA flood zone</div><div class="idet">Is any of it in a Special Flood Hazard Area \u2014 the first thing a lender asks</div></div></div>
+        <div class="intelrow"><div class="st">&#9968;</div><div class="ib"><div class="in">Elevation &amp; slope (USGS)</div><div class="idet">Grade steep enough to move the budget shows up here first</div></div></div>
+        <div class="intelrow"><div class="st">&#127756;</div><div class="ib"><div class="in">Seismic design (USGS/ASCE 7)</div><div class="idet">The design category your structural engineer will design to</div></div></div>
+        <div class="intelrow"><div class="st">&#129449;</div><div class="ib"><div class="in">Wetlands (USFWS)</div><div class="idet">Mapped wetlands mean permits and buffers \u2014 know before you offer</div></div></div>
+        <div class="intelrow"><div class="st">&#127793;</div><div class="ib"><div class="in">Soils (USDA)</div><div class="idet">The map unit under the site, straight from the soil survey</div></div></div>
+        <div class="intelrow"><div class="st">&#9928;</div><div class="ib"><div class="in">Disaster history (FEMA)</div><div class="idet">How often this county has been in a federal declaration since 2000</div></div></div>
+      </div>
+      <div class="lockover" style="position:absolute"><b>&#128274; Site Intelligence \u2014 ${PRICE_INTEL}</b><span>Type the address, click once, and screen all six layers \u2014 each linked to its official source.</span><button class="lockbtn" style="background:var(--teal);color:#04211a" onclick="openPro()">Unlock Site Intelligence</button></div></div>
+    </div>`;
+
   out.innerHTML=`
     <div class="card"><h4>Site plan <span class="sub">${esc(nm)}${$('paddr').value?(' \u00b7 '+esc($('paddr').value)):''}</span></h4>
       <div class="planwrap">${sitePlan(M)}</div>
       ${flags}
     </div>
+    ${intelCard}
     ${mepToggle}
     ${plates}
     <div class="card"><h4>The numbers</h4>${numbers}
@@ -726,8 +777,42 @@ function run(){
 
   $('printBtn').onclick=()=>{ if(!S.pro) return openPro('The printable scheme book is part of full access:'); window.print(); };
   if(EDIT.on&&TYPE==='sfh') bindEditor(EDIT.floor);
+  proUI();
 }
 function toggleMEP(){ if(!S.pro) return openPro('The MEP location layer is part of full access:'); S.mep=!S.mep; save(); run(); }
+
+/* ============ SITE INTELLIGENCE ============ */
+function intelIcon(l){return {flood:'&#127754;',elev:'&#9968;',seismic:'&#127756;',wetlands:'&#129449;',soils:'&#127793;',disasters:'&#9928;'}[l.id]||'&#128225;';}
+function intelHTML(j){
+  if(!j||!j.ok){
+    const hint=j&&j.error==='address_not_found'?'That address didn\u2019t geocode \u2014 try \u201cstreet, city, ST\u201d.':'The screen couldn\u2019t run \u2014 try again in a minute.';
+    return `<div class="flag err"><b>Screen failed:</b> ${hint}</div>`;
+  }
+  const rows=j.layers.map(l=>`<div class="intelrow">
+    <div class="st">${l.ok?(l.flag?'&#9888;&#65039;':intelIcon(l)):'&#10067;'}</div>
+    <div class="ib"><div class="in">${l.name}</div>
+      <div class="isum" ${l.flag?'style="color:var(--gold)"':''}>${l.ok?esc(l.summary):'Unavailable right now'}</div>
+      ${l.detail?`<div class="idet">${esc(l.detail)}</div>`:''}</div>
+    <a href="${l.source}" target="_blank" rel="noopener">Official source &rarr;</a>
+  </div>`).join('');
+  return `${j.matched?`<div class="mini" style="margin:2px 0 6px">Matched: ${esc(j.matched)}${j.county&&j.county.name?(' \u00b7 '+esc(j.county.name)):''}</div>`:''}
+  ${rows}
+  <div class="intelnote"><b>Preliminary screening \u2014 confirm with official sources.</b> These are point-in-time reads from public federal services, not determinations. Flood, wetland, soil, and seismic conditions must be verified with the official maps linked above and your licensed professionals before any decision.</div>`;
+}
+async function runIntel(){
+  const a=$('paddr').value.trim();
+  if(!a) return toast('Add the address first');
+  const btn=$('intelBtn'); if(btn){btn.disabled=true;btn.innerHTML='&#9203; Screening six layers\u2026';}
+  let html='';
+  try{
+    const r=await fetch(SITE_DATA+'?address='+encodeURIComponent(a));
+    const j=await r.json();
+    html=intelHTML(j);
+  }catch(e){ html='<div class="flag err"><b>Screen failed:</b> couldn\u2019t reach the site-data service \u2014 check your connection and try again.</div>'; }
+  window.__INTEL={addr:a,html};
+  run();
+  const el=document.getElementById('intelOut'); if(el&&el.scrollIntoView) el.scrollIntoView({behavior:'smooth',block:'center'});
+}
 
 /* ============ EXAMPLE ============ */
 function loadExample(){
@@ -750,13 +835,16 @@ $('exBtn').onclick=loadExample;
 
 /* ============ PRO ============ */
 const REDEEM_URL='https://neso-pro.nesoai-us.workers.dev/redeem';
+const TIER_PREFIX={SSH:{tool:'siteshaper',flag:'pro',name:'Design'},SSE:{tool:'siteshaperedit',flag:'editor',name:'Layout Editor'},SSI:{tool:'siteshaperintel',flag:'intel',name:'Site Intelligence'}};
 async function redeemCode(c){
   c=(c||'').trim().toUpperCase();
-  if(!/^SSH-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(c)) return {ok:false,msg:'That code doesn\u2019t look right'};
+  const m=c.match(/^(SSH|SSE|SSI)-[A-Z0-9]{4}-[A-Z0-9]{4}$/);
+  if(!m) return {ok:false,msg:'That code doesn\u2019t look right'};
+  const t=TIER_PREFIX[m[1]];
   try{
-    const r=await fetch(REDEEM_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'siteshaper',code:c})});
+    const r=await fetch(REDEEM_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:t.tool,code:c})});
     const j=await r.json();
-    if(j.ok) return {ok:true};
+    if(j.ok) return {ok:true,flag:t.flag,name:t.name};
     if(j.reason==='used') return {ok:false,msg:'That code has already been used'};
     return {ok:false,msg:'That code doesn\u2019t look right'};
   }catch(e){ return {ok:false,msg:'Couldn\u2019t reach the unlock server \u2014 check your connection and try again'}; }
@@ -764,23 +852,43 @@ async function redeemCode(c){
 function openModal(t,b){$('mTitle').textContent=t;$('mBody').innerHTML=b;$('modal').classList.add('on');}
 $('mClose').onclick=()=>$('modal').classList.remove('on');
 $('modal').onclick=e=>{if(e.target.id==='modal')$('modal').classList.remove('on');};
+function tierRow(name,price,own,desc,url,btnStyle){
+  return `<div style="border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-bottom:9px${own?';border-color:var(--green)':''}">
+    <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+      <b style="font-size:13.5px">${name} ${own?'<span style=\'color:var(--green)\'>\u2713 owned</span>':'\u2014 '+price}</b>
+      ${own?'':`<a class="lockbtn" style="${btnStyle||''}" href="${url}" target="_blank" rel="noopener">Get it &rarr;</a>`}
+    </div>
+    <div style="font-size:12.5px;color:var(--dim);margin-top:4px;line-height:1.5">${desc}</div></div>`;
+}
 function openPro(msg){
-  openModal('SiteShaper — full access',`<p>${msg||'One unlock, yours forever on this device:'}</p>
-   <ul style="color:var(--dim);font-size:13.5px;line-height:1.9;padding-left:18px;margin:8px 0 14px">
-     <li>Every floor plate (free previews the ground floor)</li>
-     <li>The MEP location layer &mdash; plumbing groups, panel, HVAC, water heater, condenser &amp; wet walls</li>\n     <li>The custom layout editor &mdash; drag rooms, set exact dimensions, build L-shapes</li>
-     <li>The printable scheme book &mdash; watermark-free, ready to hand to your architect</li>
-     <li>All three building types: single-family, townhouse rows, multifamily</li></ul>
-   <a class="lockbtn" href="${BUY_URL}" target="_blank" rel="noopener">Get full access &mdash; ${PRICE_TXT} &rarr;</a>
-   <div style="display:flex;gap:8px;align-items:center;margin-top:14px">
-     <input class="tin" id="codeIn" placeholder="SSH-XXXX-XXXX" style="flex:1">
+  openModal('SiteShaper \u2014 unlock levels',`<p style="font-size:13px;color:var(--dim)">${msg||'Three levels \u2014 buy once, yours for good on this device. One code box below unlocks whichever you bought.'}</p>
+   <div style="margin:12px 0 4px">
+   ${tierRow('1. Design',PRICE_TXT,S.pro,'Every floor plate, the MEP location layer, all three building types, and the printable scheme book.',BUY_DESIGN)}
+   ${tierRow('2. Layout Editor',PRICE_EDITOR,S.editor,'Drag rooms, set exact dimensions, add and rename rooms, build L-shapes. Requires Design.',BUY_EDITOR,'background:var(--gold)')}
+   ${tierRow('3. Site Intelligence',PRICE_INTEL,S.intel,'Six-layer federal screen by address: FEMA flood zone, elevation &amp; slope, seismic design, wetlands, soils, and county disaster history \u2014 each linked to its official source.',BUY_INTEL,'background:var(--teal)')}
+   </div>
+   <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+     <input class="tin" id="codeIn" placeholder="SSH- / SSE- / SSI- code" style="flex:1">
      <button class="lockbtn" id="applyCode" style="background:var(--green);color:#04211a;margin:0">Apply</button></div>`);
   $('applyCode').onclick=async()=>{const b=$('applyCode');b.disabled=true;b.textContent='\u2026';
     const r=await redeemCode($('codeIn').value);b.disabled=false;b.textContent='Apply';
-    if(r.ok){S.pro=true;save();proUI();$('modal').classList.remove('on');toast('\ud83c\udf89 Full access unlocked');run();}
+    if(r.ok){S[r.flag]=true;save();proUI();$('modal').classList.remove('on');toast('\ud83c\udf89 '+r.name+' unlocked');run();}
     else toast(r.msg);};
 }
-function proUI(){$('proBtn').textContent=S.pro?'\u2713 Full access':'Unlock full access';$('proBtn').className='pill '+(S.pro?'prodone':'pro');}
+function proUI(){
+  const owned=[S.pro&&'Design',S.editor&&'Editor',S.intel&&'Intel'].filter(Boolean);
+  $('proBtn').textContent=owned.length?('\u2713 '+owned.join(' + ')):'Unlock levels';
+  $('proBtn').className='pill '+(owned.length?'prodone':'pro');
+  const pb=document.getElementById('probar');
+  if(pb){
+    const tier=(cls,own,tn,price,td,onbtn)=>`<div class="tier ${cls} ${own?'own':''}"><div class="tn">${tn}${own?' <i style=\'color:var(--green)\'>\u2713</i>':' <i>'+price+'</i>'}</div><div class="td">${td}</div><button onclick="${own?'':onbtn}">${own?'Owned':'Unlock'}</button></div>`;
+    pb.innerHTML='<div class="probarin">'
+      +tier('t1',S.pro,'Design',PRICE_TXT,'All floor plates \u00b7 MEP locations \u00b7 all 3 building types \u00b7 printable scheme book','openPro()')
+      +tier('t2',S.editor,'Layout Editor',PRICE_EDITOR,'Drag rooms \u00b7 exact dimensions \u00b7 L-shapes \u00b7 add &amp; rename rooms','openPro()')
+      +tier('t3',S.intel,'Site Intelligence',PRICE_INTEL,'FEMA flood \u00b7 elevation &amp; slope \u00b7 seismic \u00b7 wetlands \u00b7 soils \u00b7 disaster history','openPro()')
+      +'</div>';
+  }
+}
 $('proBtn').onclick=()=>S.pro?toast('Full access is active on this device \u2713'):openPro();
 
 /* ============ TOUR ============ */

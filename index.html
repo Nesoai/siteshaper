@@ -140,6 +140,10 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 .intelnote{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.35);border-radius:9px;padding:9px 12px;font-size:12px;color:var(--dim);margin-top:11px}
 .intelnote b{color:var(--gold)}
 @media print{.probar{display:none!important}}
+#scrollTop{position:fixed;right:20px;bottom:20px;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card,#161d26);color:var(--ink,#e9eef4);font-size:20px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:70;box-shadow:0 6px 18px -6px rgba(0,0,0,.4);font-family:inherit;line-height:1}
+#scrollTop.on{display:flex}
+#scrollTop:hover{filter:brightness(1.12)}
+@media print{#scrollTop{display:none!important}}
 </style>
 </head>
 <body>
@@ -254,7 +258,8 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
   <div id="out"><div id="results"></div></div>
 </div>
 
-<footer><span class="np">SiteShaper &middot; a <a href="https://nesoai.github.io/mallory/" target="_blank" rel="noopener">Boundless</a> tool &middot; v2.0 &middot; &copy; 2026 Boundless / Mallory Bailey-Finkley &mdash; all rights reserved &middot; <a href="https://tally.so/r/rj1Z15?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://nesoai.github.io/buildbrief/">BuildBrief</a> + <a href="https://nesoai.github.io/proforma/">ProForma</a>.</footer>
+<button id="scrollTop" title="Back to top" aria-label="Back to top">↑</button>
+<footer><span class="np">SiteShaper &middot; a <a href="https://nesoai.github.io/mallory/" target="_blank" rel="noopener">Boundless</a> tool &middot; v2.2 &middot; &copy; 2026 Boundless &mdash; all rights reserved &middot; <a href="https://tally.so/r/rj1Z15?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://nesoai.github.io/buildbrief/">BuildBrief</a> + <a href="https://nesoai.github.io/proforma/">ProForma</a>.</footer>
 <div id="modal"><div id="mcard"><button class="closex" id="mClose">&times;</button><h2 id="mTitle"></h2><div id="mBody"></div></div></div>
 <div id="toast"></div>
 <div id="tourCard" role="dialog" aria-label="Guided tour">
@@ -266,12 +271,13 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 <script>
 /* ============ SITESHAPER v1.0 (Phase A) ============ */
 const BUY_DESIGN="https://nesoai.gumroad.com/l/uutuy";
-const BUY_EDITOR="mailto:nesoai.us@gmail.com?subject="+encodeURIComponent("Requesting SiteShaper Layout Editor ($29)")+"&body="+encodeURIComponent("Hi Boundless \u2014 I'd like the SiteShaper custom layout editor add-on. Please send my unlock code and how to pay."); // \u2190 swap for Gumroad when live
-const BUY_INTEL="mailto:nesoai.us@gmail.com?subject="+encodeURIComponent("Requesting SiteShaper Site Intelligence ($169)")+"&body="+encodeURIComponent("Hi Boundless \u2014 I'd like SiteShaper Site Intelligence. Please send my unlock code and how to pay."); // \u2190 swap for Gumroad when live
+const BUY_EDITOR="https://nesoai.gumroad.com/l/ktswx";
+const BUY_INTEL="https://nesoai.gumroad.com/l/ommjyh";
 const SITE_DATA="https://neso-site-data.nesoai-us.workers.dev/site";
 const PRICE_TXT="$199 founding price";
 const PRICE_EDITOR="$29";
 const PRICE_INTEL="$169";
+const BUY_INTEL_SUB="https://nesoai.gumroad.com/l/ommjyh"; // monthly option — set as Gumroad membership tier on same product or separate
 const NESO_CTA="https://tally.so/r/q4MLYg?track=re&services="+encodeURIComponent("Development Feasibility (Standard)")+"&credits=12&source=siteshaper";
 
 const $=id=>document.getElementById(id);
@@ -865,7 +871,7 @@ function openPro(msg){
    <div style="margin:12px 0 4px">
    ${tierRow('1. Design',PRICE_TXT,S.pro,'Every floor plate, the MEP location layer, all three building types, and the printable scheme book.',BUY_DESIGN)}
    ${tierRow('2. Layout Editor',PRICE_EDITOR,S.editor,'Drag rooms, set exact dimensions, add and rename rooms, build L-shapes. Requires Design.',BUY_EDITOR,'background:var(--gold)')}
-   ${tierRow('3. Site Intelligence',PRICE_INTEL,S.intel,'Six-layer federal screen by address: FEMA flood zone, elevation &amp; slope, seismic design, wetlands, soils, and county disaster history \u2014 each linked to its official source.',BUY_INTEL,'background:var(--teal)')}
+   ${tierRow('3. Site Intelligence',PRICE_INTEL,S.intel,'Six-layer federal screen by address: FEMA flood zone, elevation &amp; slope, seismic design, wetlands, soils, and county disaster history \u2014 each linked to its official source. <b>${PRICE_INTEL} one-time or $15/mo.</b>',BUY_INTEL,'background:var(--teal)')}
    </div>
    <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
      <input class="tin" id="codeIn" placeholder="SSH- / SSE- / SSI- code" style="flex:1">
@@ -916,5 +922,11 @@ $('tourBtn').onclick=()=>tourShow(0);
 setTimeout(()=>{ try{ if(!localStorage.getItem('siteshaper.tour')) tourShow(0); }catch(e){} },1100);
 
 onType(); proUI(); run();
+
+/* scroll-to-top */
+(function(){function init(){var b=document.getElementById('scrollTop');if(!b)return;
+ window.addEventListener('scroll',function(){b.classList.toggle('on',window.scrollY>400)},{passive:true});
+ b.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};}
+ if(document.getElementById('scrollTop'))init();else document.addEventListener('DOMContentLoaded',init);})();
 </script>
 </body></html>

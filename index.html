@@ -101,8 +101,9 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(90px);background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:11px 20px;font-size:13.5px;font-weight:600;z-index:90;transition:transform .25s}
 #toast.on{transform:translateX(-50%) translateY(0)}
 .tourhl{outline:2px solid var(--blue);outline-offset:3px;border-radius:10px;transition:outline .2s}
-#tourCard{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(140%);width:min(440px,92vw);background:var(--card);border:1px solid var(--blue);border-radius:14px;padding:15px 17px;z-index:95;box-shadow:0 18px 50px -12px rgba(0,0,0,.6);transition:transform .3s}
+#tourCard{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(140%);width:min(440px,92vw);background:var(--card);border:1px solid var(--blue);border-radius:14px;padding:15px 17px;z-index:200;box-shadow:0 18px 50px -12px rgba(0,0,0,.6);transition:transform .3s}
 #tourCard.on{transform:translateX(-50%) translateY(0)}
+#tourCard.on~#nchatBtn{display:none!important}
 #tourCard .tstep{font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--blue);text-transform:uppercase}
 #tourCard .ttext{font-size:13.5px;color:var(--ink);margin:5px 0 12px;line-height:1.5}
 #tourCard .tbtns{display:flex;gap:8px;justify-content:flex-end}
@@ -259,7 +260,7 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 </div>
 
 <button id="scrollTop" title="Back to top" aria-label="Back to top">↑</button>
-<footer><span class="np">SiteShaper &middot; v2.4 &middot; &copy; 2026 Boundless &mdash; all rights reserved &middot; <a href="https://tally.so/r/rj1Z15?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://nesoai.github.io/buildbrief/">BuildBrief</a> + <a href="https://nesoai.github.io/proforma/">ProForma</a>.</footer>
+<footer><span class="np">SiteShaper &middot; a <a href="https://nesoai.github.io/mallory/" target="_blank" rel="noopener">Boundless</a> tool &middot; v2.3 &middot; &copy; 2026 Boundless &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://nesoai.github.io/buildbrief/">BuildBrief</a> + <a href="https://nesoai.github.io/proforma/">ProForma</a>.</footer>
 <div id="modal"><div id="mcard"><button class="closex" id="mClose">&times;</button><h2 id="mTitle"></h2><div id="mBody"></div></div></div>
 <div id="toast"></div>
 <div id="tourCard" role="dialog" aria-label="Guided tour">
@@ -278,7 +279,7 @@ const PRICE_TXT="$199 founding price";
 const PRICE_EDITOR="$29";
 const PRICE_INTEL="$169";
 const BUY_INTEL_SUB="https://nesoai.gumroad.com/l/ommjyh"; // monthly option — set as Gumroad membership tier on same product or separate
-const NESO_CTA="https://tally.so/r/q4MLYg?track=re&services="+encodeURIComponent("Development Feasibility (Standard)")+"&credits=12&source=siteshaper";
+const NESO_CTA="https://neso-queue.nesoai-us.workers.dev/form/intake?track=re&services="+encodeURIComponent("Development Feasibility (Standard)")+"&credits=12&source=siteshaper";
 
 const $=id=>document.getElementById(id);
 const KEY='siteshaper.v1';
@@ -929,87 +930,4 @@ onType(); proUI(); run();
  b.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};}
  if(document.getElementById('scrollTop'))init();else document.addEventListener('DOMContentLoaded',init);})();
 </script>
-<div id="nesoChatRoot"></div>
-<style>
-#nchatBtn{position:fixed;right:20px;bottom:20px;z-index:120;display:flex;align-items:center;gap:9px;background:linear-gradient(90deg,#7c4dff,#a855f7);color:#fff;border:none;border-radius:999px;padding:13px 18px;font-family:Inter,system-ui,sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 10px 30px -8px rgba(124,77,255,.55)}
-#nchatBtn:hover{filter:brightness(1.07)}
-#nchatBtn svg{flex-shrink:0}
-#nchatPanel{position:fixed;right:20px;bottom:20px;z-index:121;width:min(380px,calc(100vw - 32px));height:min(560px,calc(100vh - 40px));background:#11161d;border:1px solid #232f3d;border-radius:16px;display:none;flex-direction:column;overflow:hidden;box-shadow:0 24px 60px -16px rgba(0,0,0,.6);font-family:Inter,system-ui,sans-serif}
-#nchatPanel.on{display:flex}
-#nchatHead{background:linear-gradient(120deg,rgba(124,77,255,.18),rgba(168,85,247,.1));padding:13px 16px;border-bottom:1px solid #232f3d;display:flex;align-items:center;gap:10px}
-#nchatHead .dot{width:9px;height:9px;border-radius:50%;background:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.2)}
-#nchatHead b{color:#e9eef4;font-size:14px}
-#nchatHead span{color:#96a6b6;font-size:11px;display:block;margin-top:1px}
-#nchatHead .x{margin-left:auto;background:none;border:none;color:#96a6b6;font-size:22px;cursor:pointer;line-height:1}
-#nchatBody{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
-.nmsg{max-width:82%;padding:9px 13px;border-radius:14px;font-size:13.5px;line-height:1.45}
-.nmsg.bot{background:#1b2330;color:#e9eef4;align-self:flex-start;border-bottom-left-radius:4px}
-.nmsg.me{background:linear-gradient(90deg,#7c4dff,#a855f7);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
-.ntyping{align-self:flex-start;color:#5e7080;font-size:12px;padding:4px 6px}
-#nchatFoot{border-top:1px solid #232f3d;padding:10px;display:flex;gap:8px;align-items:flex-end;background:#0d1117}
-#nchatIn{flex:1;background:#161d26;border:1px solid #232f3d;border-radius:10px;color:#e9eef4;padding:10px 12px;font-size:13.5px;font-family:inherit;resize:none;max-height:100px;line-height:1.4}
-#nchatIn:focus{outline:none;border-color:#7c4dff}
-#nchatSend{background:#7c4dff;border:none;border-radius:10px;color:#fff;width:40px;height:40px;font-size:17px;cursor:pointer;flex-shrink:0}
-#nchatSend:disabled{opacity:.5;cursor:default}
-#nchatMic{background:#161d26;border:1px solid #232f3d;border-radius:10px;color:#96a6b6;width:40px;height:40px;font-size:16px;cursor:pointer;flex-shrink:0}
-#nchatMic.rec{color:#f87171;border-color:#f87171}
-.nchatalt{font-size:11px;color:#5e7080;text-align:center;padding:0 14px 10px}
-.nchatalt a{color:#7c4dff;text-decoration:none}
-@media print{#nchatBtn,#nchatPanel{display:none!important}}
-</style>
-<button id="nchatBtn" aria-label="Talk to us about your project">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8A8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  Tell us what you need
-</button>
-<div id="nchatPanel" role="dialog" aria-label="NESO intake chat">
-  <div id="nchatHead"><span class="dot"></span><div><b>NESO intake</b><span>Automated assistant · a real person follows up</span></div><button class="x" id="nchatX" aria-label="Close">&times;</button></div>
-  <div id="nchatBody"></div>
-  <div class="nchatalt">Prefer a form? <a href="https://tally.so/r/q4MLYg" target="_blank" rel="noopener">Use the intake form</a> · or text <a href="sms:+16623824084">(662) 382-4084</a></div>
-  <div id="nchatFoot">
-    <button id="nchatMic" title="Speak instead of typing" aria-label="Voice input">&#127908;</button>
-    <textarea id="nchatIn" rows="1" placeholder="Type or tap the mic&hellip;"></textarea>
-    <button id="nchatSend" aria-label="Send">&#8593;</button>
-  </div>
-</div>
-<script>
-(function(){
-  const CHAT_URL="https://neso-intake-worker.nesoai-us.workers.dev/chat"; // ← set to your deployed worker
-  const SOURCE=(location.pathname.replace(/\W+/g,'')||'web').slice(0,30);
-  const $=id=>document.getElementById(id);
-  let msgs=[], busy=false, greeted=false;
-  const panel=$('nchatPanel'), body=$('nchatBody'), inp=$('nchatIn');
-  function esc(t){return String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-  function add(role,text){const d=document.createElement('div');d.className='nmsg '+(role==='assistant'?'bot':'me');d.innerHTML=esc(text);body.appendChild(d);body.scrollTop=body.scrollHeight;}
-  function typing(on){let t=$('ntyping1');if(on&&!t){t=document.createElement('div');t.id='ntyping1';t.className='ntyping';t.textContent='typing…';body.appendChild(t);body.scrollTop=body.scrollHeight;}else if(!on&&t){t.remove();}}
-  async function send(text){
-    if(busy)return; busy=true; $('nchatSend').disabled=true;
-    if(text){add('user',text);msgs.push({role:'user',content:text});}
-    typing(true);
-    try{
-      const r=await fetch(CHAT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:msgs,source:SOURCE})});
-      const j=await r.json(); typing(false);
-      if(j.reply){add('assistant',j.reply);msgs.push({role:'assistant',content:j.reply});}
-      if(j.complete){setTimeout(()=>add('assistant','Thanks — you\u2019re all set. A NESO principal will follow up personally. You can close this window.'),400);}
-    }catch(e){typing(false);add('assistant','Sorry \u2014 I had trouble connecting. Please use the intake form or text (662) 382-4084.');}
-    busy=false; $('nchatSend').disabled=false;
-  }
-  function open(){panel.classList.add('on');$('nchatBtn').style.display='none';inp.focus();
-    if(!greeted){greeted=true;send(null);}}
-  function close(){panel.classList.remove('on');$('nchatBtn').style.display='flex';}
-  $('nchatBtn').onclick=open; $('nchatX').onclick=close;
-  $('nchatSend').onclick=()=>{const v=inp.value.trim();if(v){inp.value='';inp.style.height='auto';send(v);}};
-  inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,100)+'px';});
-  inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('nchatSend').click();}});
-  // voice input via Web Speech API (free, on-device where supported)
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(SR){const rec=new SR();rec.continuous=false;rec.interimResults=false;
-    $('nchatMic').onclick=()=>{try{rec.start();$('nchatMic').classList.add('rec');}catch(e){}};
-    rec.onresult=e=>{inp.value=(inp.value+' '+e.results[0][0].transcript).trim();inp.dispatchEvent(new Event('input'));};
-    rec.onend=()=>$('nchatMic').classList.remove('rec');
-    rec.onerror=()=>$('nchatMic').classList.remove('rec');
-  } else { $('nchatMic').style.display='none'; }
-})();
-</script>
-<!-- END NESO INTAKE CHAT WIDGET -->
-
 </body></html>

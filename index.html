@@ -260,7 +260,7 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 </div>
 
 <button id="scrollTop" title="Back to top" aria-label="Back to top">↑</button>
-<footer><span class="np">SiteShaper &middot; a <a href="https://nesoai.github.io/mallory/" target="_blank" rel="noopener">Boundless</a> tool &middot; v2.3 &middot; &copy; 2026 Boundless &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://nesoai.github.io/buildbrief/">BuildBrief</a> + <a href="https://nesoai.github.io/proforma/">ProForma</a>.</footer>
+<footer><span class="np">SiteShaper &middot; v2.5 &middot; &copy; 2026 NESO &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://buildbrief.nesohq.com/">BuildBrief</a> + <a href="https://proforma.nesohq.com/">ProForma</a>.</footer>
 <div id="modal"><div id="mcard"><button class="closex" id="mClose">&times;</button><h2 id="mTitle"></h2><div id="mBody"></div></div></div>
 <div id="toast"></div>
 <div id="tourCard" role="dialog" aria-label="Guided tour">
@@ -777,8 +777,8 @@ function run(){
       <p class="mini" style="margin-top:9px">Schematic yields from standard planning assumptions \u2014 confirm all areas, heights, and requirements with your design professionals and local code.</p></div>
     <div class="rowbtns">
       <button class="smallbtn" id="printBtn">&#128424; Print scheme book ${S.pro?'':'&#128274;'}</button>
-      <a class="smallbtn" href="https://nesoai.github.io/buildbrief/" target="_blank" rel="noopener">&#128203; Write the intent brief (BuildBrief)</a>
-      <a class="smallbtn" href="https://nesoai.github.io/proforma/" target="_blank" rel="noopener">&#128200; Run the numbers (ProForma)</a>
+      <a class="smallbtn" href="https://buildbrief.nesohq.com/" target="_blank" rel="noopener">&#128203; Write the intent brief (BuildBrief)</a>
+      <a class="smallbtn" href="https://proforma.nesohq.com/" target="_blank" rel="noopener">&#128200; Run the numbers (ProForma)</a>
     </div>
     <div class="cta-neso"><p><b>Want planner eyes on the scheme?</b> NESO&rsquo;s feasibility practice \u2014 urban planners and an engineer who speak fluent architect \u2014 pressure-tests the program, zoning path, and numbers before you spend design fees.</p><a href="${NESO_CTA}" target="_blank" rel="noopener">Have NESO review it &rarr;</a></div>`;
 
@@ -930,4 +930,14 @@ onType(); proUI(); run();
  b.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};}
  if(document.getElementById('scrollTop'))init();else document.addEventListener('DOMContentLoaded',init);})();
 </script>
+
+<!-- back to top -->
+<button id="toTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+<style>
+#toTop{position:fixed;left:16px;bottom:20px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 22px -8px rgba(0,0,0,.45);opacity:0;visibility:hidden;transform:translateY(10px);transition:.25s;z-index:150}
+#toTop.on{opacity:1;visibility:visible;transform:none}
+#tourCard.on~#toTop{display:none!important}
+@media print{#toTop{display:none!important}}
+</style>
+<script>(function(){var b=document.getElementById('toTop');function chk(){if(window.scrollY>500)b.classList.add('on');else b.classList.remove('on');}window.addEventListener('scroll',chk,{passive:true});chk();})();</script>
 </body></html>

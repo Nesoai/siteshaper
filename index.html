@@ -260,7 +260,7 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 </div>
 
 <button id="scrollTop" title="Back to top" aria-label="Back to top">↑</button>
-<footer><span class="np">SiteShaper &middot; v2.5 &middot; &copy; 2026 NESO &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://buildbrief.nesohq.com/">BuildBrief</a> + <a href="https://proforma.nesohq.com/">ProForma</a>.</footer>
+<footer><span class="np">SiteShaper &middot; v2.6 &middot; &copy; 2026 NESO &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://buildbrief.nesohq.com/">BuildBrief</a> + <a href="https://proforma.nesohq.com/">ProForma</a>.</footer>
 <div id="modal"><div id="mcard"><button class="closex" id="mClose">&times;</button><h2 id="mTitle"></h2><div id="mBody"></div></div></div>
 <div id="toast"></div>
 <div id="tourCard" role="dialog" aria-label="Guided tour">
@@ -872,7 +872,7 @@ function openPro(msg){
    <div style="margin:12px 0 4px">
    ${tierRow('1. Design',PRICE_TXT,S.pro,'Every floor plate, the MEP location layer, all three building types, and the printable scheme book.',BUY_DESIGN)}
    ${tierRow('2. Layout Editor',PRICE_EDITOR,S.editor,'Drag rooms, set exact dimensions, add and rename rooms, build L-shapes. Requires Design.',BUY_EDITOR,'background:var(--gold)')}
-   ${tierRow('3. Site Intelligence',PRICE_INTEL,S.intel,'Six-layer federal screen by address: FEMA flood zone, elevation &amp; slope, seismic design, wetlands, soils, and county disaster history \u2014 each linked to its official source. <b>${PRICE_INTEL} one-time or $15/mo.</b>',BUY_INTEL,'background:var(--teal)')}
+   ${tierRow('3. Site Intelligence',PRICE_INTEL,S.intel,'Six-layer federal screen by address: FEMA flood zone, elevation &amp; slope, seismic design, wetlands, soils, and county disaster history \u2014 each linked to its official source. <b>'+PRICE_INTEL+' one-time.</b>',BUY_INTEL,'background:var(--teal)')}
    </div>
    <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
      <input class="tin" id="codeIn" placeholder="SSH- / SSE- / SSI- code" style="flex:1">

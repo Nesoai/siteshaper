@@ -326,13 +326,24 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
   </div>
 </div>
 <script>
-/* Paste the Google Calendar appointment-schedule link between the quotes. */
+/* Paste the Google Calendar appointment-schedule link between the quotes.
+   Until it is set the block still renders and says booking is coming soon,
+   offering the text line instead — an announced product with a working fallback
+   sells better than a section that silently is not there. */
 var ASK_URL = "";
 (function(){
   var el=document.getElementById('askc'), b=document.getElementById('askcBtn');
-  if(!el||!ASK_URL){ return; }
-  var src=encodeURIComponent(location.hostname.replace(/\.nesohq\.com$/,''));
-  b.href=ASK_URL+(ASK_URL.indexOf('?')>-1?'&':'?')+'src='+src;
+  if(!el) return;
+  if(ASK_URL){
+    var src=encodeURIComponent(location.hostname.replace(/\.nesohq\.com$/,''));
+    b.href=ASK_URL+(ASK_URL.indexOf('?')>-1?'&':'?')+'src='+src;
+  } else {
+    b.href='sms:+19012950322?&body=' + encodeURIComponent('Hi NESO \u2014 I\'d like to book an Ask Charles session about: ');
+    b.textContent='Text (901) 295-0322 to book \u2192';
+    b.removeAttribute('target');
+    var k=el.querySelector('.askc-k');
+    if(k) k.innerHTML='Ask Charles \u00b7 30 minutes \u00b7 $150 \u00b7 <span style="opacity:.8">online booking coming soon</span>';
+  }
   el.style.display='';
 })();
 </script>

@@ -212,6 +212,27 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
       <label class="lbl">Target finished area (SF)</label>
       <input class="tin" id="sfhSF" type="number" value="1500" min="400" step="50">
       <div class="mini">Leave as suggested or set your own; excludes garage.</div>
+      <div class="two" style="margin-top:12px">
+        <div>
+          <select class="tin" id="shapeIn">
+            <option value="rect">Rectangle</option>
+            <option value="ell">L-shape</option>
+            <option value="angle">Angled entry</option>
+            <option value="ellangle">L-shape + angled entry</option>
+          </select>
+          <div class="mini">Footprint shape</div>
+        </div>
+        <div>
+          <select class="tin" id="vaultIn">
+            <option value="none">Flat ceilings</option>
+            <option value="living">Vault the living/kitchen</option>
+            <option value="primary">Vault the primary bed</option>
+            <option value="both">Vault both</option>
+          </select>
+          <div class="mini">Vaulted spaces</div>
+        </div>
+      </div>
+      <div class="mini" style="margin-top:6px">An L-shape pulls the sleeping wing back and leaves an outdoor corner. An angled entry clips the front corner at 45&deg;. Vaults are marked with hatch and a ceiling note &mdash; a plan cannot draw height, so it is called out the way a drawing set calls it out.</div>
     </div>
 
     <!-- Townhouse program -->
@@ -260,7 +281,7 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 </div>
 
 <button id="scrollTop" title="Back to top" aria-label="Back to top">↑</button>
-<footer><span class="np">SiteShaper &middot; v2.8 &middot; &copy; 2026 NESO &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://buildbrief.nesohq.com/">BuildBrief</a> + <a href="https://proforma.nesohq.com/">ProForma</a>.</footer>
+<footer><span class="np">SiteShaper &middot; v2.9 &middot; &copy; 2026 NESO &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://buildbrief.nesohq.com/">BuildBrief</a> + <a href="https://proforma.nesohq.com/">ProForma</a>.</footer>
 <div id="modal"><div id="mcard"><button class="closex" id="mClose">&times;</button><h2 id="mTitle"></h2><div id="mBody"></div></div></div>
 <div id="toast"></div>
 <div id="tourCard" role="dialog" aria-label="Guided tour">
@@ -309,6 +330,7 @@ function onType(){ EDIT={on:false,floor:0,sel:-1};
   if(TYPE!=='sfh'&&PARK!=='surface'){PARK='surface';segInit('parkRow',PARKS,()=>PARK,v=>PARK=v);}
 }
 ['pname','paddr','lotW','lotD','sbF','sbS','sbR','beds','baths','sfhStories','sfhSF','thUnits','thBeds','mSt','m1','m2','m3','mfStories','pratio','offF','offS'].forEach(id=>{const e=$(id); if(e) e.oninput=()=>run();});
+['shapeIn','vaultIn'].forEach(id=>{const e=$(id); if(e) e.onchange=()=>{ S.layouts={}; run(); };});  /* shape changes invalidate a hand-edited layout */
 $('runBtn').onclick=()=>{run();const r=$('results');if(r&&r.scrollIntoView)r.scrollIntoView({behavior:'smooth',block:'start'});};
 
 /* ============ GEOMETRY MODEL ============ */
@@ -324,16 +346,15 @@ function model(){
     net=+$('sfhSF').value||1200;
     const perFloor=net/stories;
     garW=GAR==='0'?0:(GAR==='1'?13:22); garD=GAR==='0'?0:22;
-    /* v2.7 FOOTPRINT FIX: the garage shares the footprint instead of pushing the
-       living area into the strip beside it. The old math made an ordinary 1,800 SF
-       three-bed 24 ft wide by 75 ft deep and failed the envelope on a 60x110 lot. */
+    /* Footprint: the garage SHARES the footprint instead of pushing the living
+       area into the strip beside it (which made an 1,800 SF three-bed 24x75). */
     const garA=GAR==='0'?0:garW*garD;
     const footA=perFloor+garA;
     let fw=Math.sqrt(footA*1.45);
     fw=Math.min(envW, Math.max(fw, garW+16));
     let fd=footA/fw;
     if(fd<garD+2) fd=garD+2;
-    bw=Math.round(fw); bd=Math.round(fd);
+    bw=Math.round(fw); bd=Math.round(bd=fd);
     gsf=net+garA;
     units=1; label='Single-family';
   } else if(TYPE==='th'){
@@ -485,13 +506,18 @@ const layKey=f=>'sfh:'+f+':'+Math.round(model().bw)+'x'+Math.round(model().bd);
 function roomsFor(M,floor){ const k=layKey(floor); return S.layouts[k]?S.layouts[k]:sfhAutoRooms(M,floor); }
 function isCustom(floor){ return !!S.layouts[layKey(floor)]; }
 
-/* ============ FLOOR PLATE — v2.8 engine ============ */
+/* ============ FLOOR PLATE — v2.9 engine ============ */
 function sfhPlate(M,floor,showMEP){
   const custom=S.layouts[layKey(floor)];
+  const sh=($('shapeIn')&&$('shapeIn').value)||'rect';
+  const va=($('vaultIn')&&$('vaultIn').value)||'none';
   return drawPlate({
     bw:M.bw, bd:M.bd, stories:M.stories, floor:floor,
     beds:Math.max(1,+$('beds').value||3), baths:+$('baths').value||2,
     garW:M.garW||0, maxW:560, maxH:420,
+    shape:(sh==='ell'||sh==='ellangle')?'ell':'rect',
+    angledEntry:(sh==='angle'||sh==='ellangle'),
+    vault:va,
     title:(M.stories===2?('FLOOR '+floor):'FLOOR PLAN')+(custom?' \u00b7 custom layout':''),
     rooms:custom||null,
     editing:(EDIT.on&&EDIT.floor===floor), sel:EDIT.sel, showMEP:showMEP
@@ -536,7 +562,7 @@ function sfhPlate_v26(M,floor,showMEP){
   return s2;
 }
 
-/* ===== PLAN ENGINE v2.8 ===== */
+/* ===== PLAN ENGINE v2.9 ===== */
 /* ============================================================================
    SITESHAPER FLOOR PLAN ENGINE  (v2.7)
    ----------------------------------------------------------------------------
@@ -780,6 +806,42 @@ function packBand2(items, x0, y0, bandW, bandH, filler) {
   return out;
 }
 
+/* ---- envelope shape (v2.9) -------------------------------------------------
+   Three shape options a person sketching a house actually asks for. All three
+   are geometry, not decoration, so they change the room layout rather than
+   being drawn on top of it.
+
+   L-SHAPE   A rear corner is removed. The sleeping band gets narrower by the
+             notch width and the removed block becomes yard, which is what an
+             L-plan is: a wing, and an outdoor corner it wraps.
+   ANGLED    The front corner beside the entry is cut at 45 degrees. The wall
+   ENTRY     polygon carries the cut and a clip path keeps every room inside it,
+             so nothing has to be re-solved to stay in the envelope.
+   VAULTED   A ceiling height, which a plan genuinely cannot draw. It is marked
+             the way a drawing set marks it: hatch over the room, a VAULTED tag
+             under the room name, and the height called out. Honest, and it
+             reads correctly to anyone who has held a drawing.  */
+function envelope(opts, iw, id) {
+  const shape = opts.shape || 'rect';
+  const notchW = shape === 'ell' ? Math.min(iw * 0.30, 16) : 0;
+  const notchH = shape === 'ell' ? Math.min(id * 0.34, 14) : 0;
+  const cut = opts.angledEntry ? Math.min(iw * 0.16, id * 0.16, 9) : 0;
+  return { shape, notchW, notchH, cut };
+}
+/* Outer wall polygon in FEET, interior coordinates offset by the wall at draw
+   time. Points run clockwise from the top-left. */
+function envPoints(env, iw, id) {
+  const p = [];
+  if (env.cut) { p.push([env.cut, 0], [iw, 0]); } else { p.push([0, 0], [iw, 0]); }
+  if (env.notchW) {
+    p.push([iw, id - env.notchH], [iw - env.notchW, id - env.notchH], [iw - env.notchW, id], [0, id]);
+  } else {
+    p.push([iw, id], [0, id]);
+  }
+  if (env.cut) p.push([0, env.cut]);
+  return p;
+}
+
 /* The plan. Interior coordinates: 0..iw by 0..id, walls added at draw time.
 
    THE BAND RULE, which is what v1 got wrong:
@@ -794,6 +856,7 @@ function packBand2(items, x0, y0, bandW, bandH, filler) {
 function planRooms(opts) {
   const iw = Math.max(8, opts.bw - 2 * WEXT);
   const id = Math.max(8, opts.bd - 2 * WEXT);
+  const env = envelope(opts, iw, id);
   const beds = Math.max(1, opts.beds || 3);
   const baths = opts.baths || 2;
   const twoSt = opts.stories === 2;
@@ -877,9 +940,21 @@ function planRooms(opts) {
   } else if (midH > 0) {
     rooms.push({ n: 'LAUNDRY', k: 'laundry', x: 0, y: +frontH.toFixed(2), w: +iw.toFixed(2), h: +midH.toFixed(2) });
   }
-  rooms.push(...packBand2(rear, 0, rearY, iw, rearH,
+  /* On an L-plan the wing is narrower, so the sleeping band packs into the
+     remaining width and the notch stays outside the house. */
+  const rearW = env.notchW && rearY + rearH > id - env.notchH - 0.01 ? Math.max(14, iw - env.notchW) : iw;
+  rooms.push(...packBand2(rear, 0, rearY, rearW, rearH,
     (twoSt && floor === 2) ? { n: 'LOFT / LANDING', k: 'flex' } : { n: 'STORAGE', k: 'closet' }));
-  return { rooms, iw, id, hallY, rearY, frontH };
+  /* Vaulted rooms are marked, not resized. */
+  const v = opts.vault || 'none';
+  if (v !== 'none') {
+    for (const r of rooms) {
+      if (v === 'living' && /LIVING|KITCHEN/.test(r.n)) r.vault = true;
+      if (v === 'primary' && /PRIMARY BED/.test(r.n)) r.vault = true;
+      if (v === 'both' && (/LIVING|KITCHEN/.test(r.n) || /PRIMARY BED/.test(r.n))) r.vault = true;
+    }
+  }
+  return { rooms, iw, id, hallY, rearY, frontH, env, rearW };
 }
 
 /* Rooms saved by the Layout Editor carry a name and no kind, so infer it —
@@ -1034,8 +1109,20 @@ function drawPlate(opts) {
     (opts.floor ? ' id="plateSvg' + opts.floor + '"' : '') +
     ' data-sc="' + sc + '" data-pad="' + (padL + ext) + '">';
 
-  /* 1. solid building, then punch rooms out of it — walls appear by subtraction */
-  s += pRect(X, Y, bw * sc, bd * sc, { f: INK });
+  /* 1. solid building, then punch rooms out of it — walls appear by subtraction.
+     The envelope is a polygon now, so an L-plan or a clipped corner produces
+     correct walls with no extra code, and a clip path guarantees no room, door
+     or fixture can be drawn outside the building line. */
+  const envPts = envPoints(P.env, P.iw, P.id)
+    .map(pt => [X + ext + pt[0] * sc, Y + ext + pt[1] * sc]);
+  const outer = envPoints(P.env, P.iw + 2 * WEXT, P.id + 2 * WEXT)
+    .map(pt => [X + pt[0] * sc, Y + pt[1] * sc]);
+  const poly = a => a.map(pt => pt[0].toFixed(1) + ',' + pt[1].toFixed(1)).join(' ');
+  s += '<defs><clipPath id="env' + (opts.floor || 1) + '"><polygon points="' + poly(outer) + '"/></clipPath>' +
+    '<pattern id="vault" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">' +
+    '<line x1="0" y1="0" x2="0" y2="7" stroke="' + FIXC + '" stroke-width="0.7" opacity="0.45"/></pattern></defs>';
+  s += '<polygon points="' + poly(outer) + '" fill="' + INK + '"/>';
+  s += '<g clip-path="url(#env' + (opts.floor || 1) + ')">';
   const RX = (fx) => X + ext + fx * sc;
   const RY = (fy) => Y + ext + fy * sc;
   const boxes = rooms.map(r => {
@@ -1092,7 +1179,10 @@ function drawPlate(opts) {
   }
 
   /* 4. fixtures, then labels last so nothing is drawn over a name */
-  boxes.forEach(b => { s += fixtures(b.r, b.x, b.y, b.w, b.h, sc); });
+  boxes.forEach(b => {
+    if (b.r.vault) s += pRect(b.x, b.y, b.w, b.h, { f: 'url(#vault)' });
+    s += fixtures(b.r, b.x, b.y, b.w, b.h, sc);
+  });
   boxes.forEach(b => {
     const r = b.r;
     if (r.k === 'hall') return;
@@ -1110,6 +1200,7 @@ function drawPlate(opts) {
       ty += fit.size * 1.24;
     });
     if (showDims) s += pText(cx, ty + 1, dims + (showArea ? ' \u00b7 ' + room + ' SF' : ''), { a: 'middle', z: 6.6, f: TXT2 });
+    if (r.vault && b.h > 46 && b.w > 52) s += pText(cx, ty + (showDims ? 11 : 2), 'VAULTED \u00b7 14\u2032 CLG', { a: 'middle', z: 6.2, f: '#2dd4bf', w: 700, ls: '0.5' });
   });
 
   /* 4b. MEP layer — the tool's own glyphs, so the legend still matches */
@@ -1128,6 +1219,8 @@ function drawPlate(opts) {
     s += mep(X + bw * sc - 16, Y + bd * sc + 10, 'C');
     s += pText(X + bw * sc - 28, Y + bd * sc + 13, 'condenser pad', { a: 'end', z: 7, f: DIMC });
   }
+
+  s += '</g>';   /* end clipped building group */
 
   /* 5. dimension strings, scale bar, north arrow, title line */
   s += dimString(X, Y - 12, X + bw * sc, Y - 12, Math.round(bw) + "'-0\"", false);
@@ -1155,7 +1248,7 @@ function enterEdit(floor){
   if(!S.pro) return openPro('The Layout Editor works on the Design plates \u2014 unlock Design first:');
   if(!S.editor) return openPro('The custom layout editor is a separate '+PRICE_EDITOR+' add-on:');
   const M=model(); const k=layKey(floor);
-  if(!S.layouts[k]) S.layouts[k]=JSON.parse(JSON.stringify(planRooms({bw:M.bw,bd:M.bd,stories:M.stories,floor:floor,beds:Math.max(1,+$('beds').value||3),baths:+$('baths').value||2,garW:M.garW||0}).rooms));
+  if(!S.layouts[k]) S.layouts[k]=JSON.parse(JSON.stringify(planRooms({bw:M.bw,bd:M.bd,stories:M.stories,floor:floor,beds:Math.max(1,+$('beds').value||3),baths:+$('baths').value||2,garW:M.garW||0,shape:(($('shapeIn')&&$('shapeIn').value)||'rect').indexOf('ell')===0?'ell':'rect',angledEntry:/angle/.test(($('shapeIn')&&$('shapeIn').value)||''),vault:($('vaultIn')&&$('vaultIn').value)||'none'}).rooms));
   EDIT={on:true,floor,sel:-1}; save(); run();
 }
 function exitEdit(){ EDIT={on:false,floor:0,sel:-1}; save(); run(); }
@@ -1323,8 +1416,8 @@ function run(){
   const nPlates = TYPE==='sfh'?M.stories : TYPE==='th'?2 : M.stories;
   let plates='';
   for(let f=1;f<=nPlates;f++){
-    /* v2.7: every plate is visible on the free tier. Paid is the MEP layer, the
-       Layout Editor, the printable scheme book and Site Intelligence. */
+    /* Every plate is visible on the free tier. Paid is the MEP layer, the Layout
+       Editor, the printable scheme book and Site Intelligence. */
     const locked = false;
     const showMEP = S.mep && S.pro;
     const editing = EDIT.on&&EDIT.floor===f&&TYPE==='sfh';

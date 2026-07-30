@@ -154,6 +154,19 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 #logo .byneso a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}
 #logo .byneso a:hover{color:var(--ink,#e9eef4);border-bottom-color:currentColor}
 #logo .lgwrap{display:flex;flex-direction:column;line-height:1.12}
+
+/* Ask Charles */
+.askc{display:flex;gap:18px;align-items:flex-start;background:var(--card,#161d26);border:1px solid var(--line,#232f3d);
+  border-left:3px solid var(--gold,#eab308);border-radius:14px;padding:18px 20px;margin:26px 0;flex-wrap:wrap}
+.askc-ph{width:96px;height:96px;border-radius:50%;object-fit:cover;flex:none;border:2px solid var(--line,#232f3d)}
+.askc-b{flex:1;min-width:240px}
+.askc-k{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold,#eab308);font-weight:800;margin-bottom:5px}
+.askc h3{font-size:17px;margin:0 0 6px;color:var(--ink,#e9eef4)}
+.askc p{font-size:13px;color:var(--dim,#96a6b6);margin:0 0 8px;line-height:1.55}
+.askc .askc-n{font-size:12px;color:var(--faint,#5e7080)}
+.askc-btn{display:inline-block;background:var(--gold,#eab308);color:#1a1206;font-weight:800;font-size:13px;
+  border-radius:999px;padding:10px 18px;text-decoration:none;margin-top:4px}
+@media print{.askc{display:none!important}}
 </style>
 </head>
 <body>
@@ -290,6 +303,40 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 </div>
 
 <button id="scrollTop" title="Back to top" aria-label="Back to top">↑</button>
+
+<!-- ===== ASK CHARLES (v1) =====================================================
+     A paid, live-only consultation. Set ASK_URL below to the Google Calendar
+     appointment-schedule link once it exists; while it is empty this block does
+     not render at all, because a booking button that goes nowhere is worse than
+     no button. The photo is served from the hub, so it is uploaded once and
+     every tool picks it up.
+     THE BOUNDARY IS THE PRODUCT: thirty minutes of answers, live. Nothing
+     written, nothing researched, nothing sent afterwards. Anything on paper is
+     a Pro unlock, a Bird's Eye report, or credit work — which is what keeps
+     this from quietly becoming free consulting.
+========================================================================== -->
+<div class="askc" id="askc" style="display:none">
+  <img class="askc-ph" src="https://nesohq.com/img/charles-finkley.jpg" alt="Charles L. Finkley, Jr." loading="lazy">
+  <div class="askc-b">
+    <div class="askc-k">Ask Charles &middot; 30 minutes &middot; $150</div>
+    <h3>Stuck on the parcel, not the spreadsheet?</h3>
+    <p>Bring the address and the decision you are trying to make. Charles L. Finkley, Jr., MPA &mdash; 17 years in land use, entitlements and economic development &mdash; answers live from experience. No homework, no waiting.</p>
+    <p class="askc-n"><b>Live conversation only.</b> Nothing is researched or written up afterwards &mdash; anything on paper is a report or credit work, and he will tell you which on the call.</p>
+    <a class="askc-btn" id="askcBtn" href="#" target="_blank" rel="noopener">Book 30 minutes &rarr;</a>
+  </div>
+</div>
+<script>
+/* Paste the Google Calendar appointment-schedule link between the quotes. */
+var ASK_URL = "";
+(function(){
+  var el=document.getElementById('askc'), b=document.getElementById('askcBtn');
+  if(!el||!ASK_URL){ return; }
+  var src=encodeURIComponent(location.hostname.replace(/\.nesohq\.com$/,''));
+  b.href=ASK_URL+(ASK_URL.indexOf('?')>-1?'&':'?')+'src='+src;
+  el.style.display='';
+})();
+</script>
+
 <footer><span class="np">SiteShaper &middot; v2.10 &middot; &copy; 2026 NESO &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://buildbrief.nesohq.com/">BuildBrief</a> + <a href="https://proforma.nesohq.com/">ProForma</a>.</footer>
 <div id="modal"><div id="mcard"><button class="closex" id="mClose">&times;</button><h2 id="mTitle"></h2><div id="mBody"></div></div></div>
 <div id="toast"></div>

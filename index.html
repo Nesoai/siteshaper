@@ -260,7 +260,7 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 </div>
 
 <button id="scrollTop" title="Back to top" aria-label="Back to top">↑</button>
-<footer><span class="np">SiteShaper &middot; v2.7 &middot; &copy; 2026 NESO &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://buildbrief.nesohq.com/">BuildBrief</a> + <a href="https://proforma.nesohq.com/">ProForma</a>.</footer>
+<footer><span class="np">SiteShaper &middot; v2.8 &middot; &copy; 2026 NESO &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://buildbrief.nesohq.com/">BuildBrief</a> + <a href="https://proforma.nesohq.com/">ProForma</a>.</footer>
 <div id="modal"><div id="mcard"><button class="closex" id="mClose">&times;</button><h2 id="mTitle"></h2><div id="mBody"></div></div></div>
 <div id="toast"></div>
 <div id="tourCard" role="dialog" aria-label="Guided tour">
@@ -324,18 +324,15 @@ function model(){
     net=+$('sfhSF').value||1200;
     const perFloor=net/stories;
     garW=GAR==='0'?0:(GAR==='1'?13:22); garD=GAR==='0'?0:22;
-    /* v2.7 FOOTPRINT FIX. The old arithmetic pushed the living area into the
-       strip left over beside the garage and then made it deep enough to hold the
-       area: an ordinary 1,800 SF three-bed with a two-car garage came out 24 ft
-       wide by 75 ft deep, which failed the envelope test on a normal 60x110 lot
-       and drew a plan no house has ever looked like. The garage shares the
-       footprint rather than being pushed out of it. */
+    /* v2.7 FOOTPRINT FIX: the garage shares the footprint instead of pushing the
+       living area into the strip beside it. The old math made an ordinary 1,800 SF
+       three-bed 24 ft wide by 75 ft deep and failed the envelope on a 60x110 lot. */
     const garA=GAR==='0'?0:garW*garD;
-    const footA=perFloor+garA;                  // ground-floor footprint, garage included
-    let fw=Math.sqrt(footA*1.45);               // wider than deep, as built
-    fw=Math.min(envW, Math.max(fw, garW+16));   // garage plus a real room beside it
+    const footA=perFloor+garA;
+    let fw=Math.sqrt(footA*1.45);
+    fw=Math.min(envW, Math.max(fw, garW+16));
     let fd=footA/fw;
-    if(fd<garD+2) fd=garD+2;                    // the garage has to physically fit
+    if(fd<garD+2) fd=garD+2;
     bw=Math.round(fw); bd=Math.round(fd);
     gsf=net+garA;
     units=1; label='Single-family';
@@ -488,7 +485,7 @@ const layKey=f=>'sfh:'+f+':'+Math.round(model().bw)+'x'+Math.round(model().bd);
 function roomsFor(M,floor){ const k=layKey(floor); return S.layouts[k]?S.layouts[k]:sfhAutoRooms(M,floor); }
 function isCustom(floor){ return !!S.layouts[layKey(floor)]; }
 
-/* ============ FLOOR PLATE — v2.7 engine ============ */
+/* ============ FLOOR PLATE — v2.8 engine ============ */
 function sfhPlate(M,floor,showMEP){
   const custom=S.layouts[layKey(floor)];
   return drawPlate({
@@ -500,7 +497,6 @@ function sfhPlate(M,floor,showMEP){
     editing:(EDIT.on&&EDIT.floor===floor), sel:EDIT.sel, showMEP:showMEP
   });
 }
-/* v2.6 plate kept for one release so a bad surprise can be reverted in one line. */
 function sfhPlate_v26(M,floor,showMEP){
   const maxW=560,pad=30;
   const sc=Math.min((maxW-pad*2)/M.bw, 300/M.bd);
@@ -540,7 +536,7 @@ function sfhPlate_v26(M,floor,showMEP){
   return s2;
 }
 
-/* ===== PLAN ENGINE v2.7 ===== */
+/* ===== PLAN ENGINE v2.8 ===== */
 /* ============================================================================
    SITESHAPER FLOOR PLAN ENGINE  (v2.7)
    ----------------------------------------------------------------------------
@@ -695,7 +691,106 @@ function packBand(items, x0, y0, bandW, bandH) {
   return out;
 }
 
-/* The plan. Interior coordinates: 0..iw by 0..id, walls added at draw time. */
+/* ---- width allocation with minimums --------------------------------------
+   Proportional weights alone produced 6-foot-wide bedrooms: the weights are
+   relative, and nothing stopped a slice being narrower than a room can be.
+   Every item now carries a real-world minimum width, and the allocator raises
+   anything under it by taking width proportionally from the rooms that have
+   room to give. If the band genuinely cannot hold the minimums, they scale
+   down together rather than one room collapsing. */
+const MINW = { bed: 9.5, bath: 5, closet: 3, kitchen: 9, living: 10.5, entry: 4,
+               flex: 8, laundry: 5, garage: 11, stairup: 3.2, stairdn: 3.2, hall: 3, room: 5 };
+function minOf(it) {
+  if (it.stack) return Math.max(...it.stack.map(s => MINW[s.k] || MINW.room));
+  return MINW[it.k] || MINW.room;
+}
+/* Ceilings matter as much as floors: with only two rooms on a 43-foot wall the
+   proportional split handed a bedroom 29 feet, which is a ballroom. Anything
+   over its maximum gives the width back, and whatever nobody can use becomes a
+   named leftover room rather than being absorbed into a bedroom. */
+const MAXW = { bed: 17, bath: 11, closet: 8, kitchen: 24, living: 26, entry: 9,
+               flex: 24, laundry: 11, garage: 24, stairup: 6, stairdn: 6, hall: 99, room: 20 };
+function maxOf(it) {
+  if (it.stack) return Math.min(...it.stack.map(s => MAXW[s.k] || MAXW.room));
+  return MAXW[it.k] || MAXW.room;
+}
+function allocate(items, bandW) {
+  const tot = items.reduce((a, r) => a + r.wt, 0) || 1;
+  let w = items.map(it => bandW * it.wt / tot);
+  const mins = items.map(minOf), maxs = items.map(maxOf);
+  const need = mins.reduce((a, b) => a + b, 0);
+  const k = need > bandW ? bandW / need : 1;   /* too many rooms for the wall: shrink together */
+  const m = mins.map(x => x * k);
+  for (let pass = 0; pass < 24; pass++) {
+    let deficit = 0;
+    for (let i = 0; i < w.length; i++) if (w[i] < m[i]) deficit += m[i] - w[i];
+    if (deficit < 0.01) break;
+    let surplus = 0;
+    for (let i = 0; i < w.length; i++) if (w[i] > m[i]) surplus += w[i] - m[i];
+    if (surplus < 0.01) break;
+    const take = Math.min(deficit, surplus);
+    for (let i = 0; i < w.length; i++) {
+      if (w[i] < m[i]) w[i] = m[i];
+      else w[i] -= (w[i] - m[i]) / surplus * take;
+    }
+  }
+  /* ceiling pass */
+  for (let pass = 0; pass < 24; pass++) {
+    let over = 0;
+    for (let i = 0; i < w.length; i++) if (w[i] > maxs[i]) { over += w[i] - maxs[i]; w[i] = maxs[i]; }
+    if (over < 0.01) break;
+    let room = 0;
+    for (let i = 0; i < w.length; i++) room += Math.max(0, maxs[i] - w[i]);
+    if (room < 0.01) return { w, leftover: over };   /* nobody can take it */
+    const give = Math.min(over, room);
+    for (let i = 0; i < w.length; i++) {
+      const cap = Math.max(0, maxs[i] - w[i]);
+      if (cap > 0) w[i] += cap / room * give;
+    }
+    if (over - give > 0.01) return { w, leftover: over - give };
+  }
+  const used = w.reduce((a, b) => a + b, 0);
+  return { w, leftover: Math.max(0, bandW - used) };
+}
+
+/* ---- band packer: widths from allocate(), stacks split the band depth ---- */
+function packBand2(items, x0, y0, bandW, bandH, filler) {
+  const { w: ws, leftover } = allocate(items, bandW);
+  let x = x0;
+  const out = [];
+  items.forEach((it, i) => {
+    const w = ws[i];
+    if (it.stack) {
+      const fsum = it.stack.reduce((a, s) => a + (s.frac || 1), 0);
+      let y = y0;
+      it.stack.forEach((s) => {
+        const h = bandH * (s.frac || 1) / fsum;
+        out.push({ n: s.n, k: s.k || 'room', x: +x.toFixed(2), y: +y.toFixed(2), w: +w.toFixed(2), h: +h.toFixed(2) });
+        y += h;
+      });
+    } else {
+      out.push({ n: it.n, k: it.k || 'room', x: +x.toFixed(2), y: +y0.toFixed(2), w: +w.toFixed(2), h: +bandH.toFixed(2) });
+    }
+    x += w;
+  });
+  if (leftover > 3) {
+    const f = filler || { n: 'STORAGE', k: 'closet' };
+    out.push({ n: f.n, k: f.k, x: +x.toFixed(2), y: +y0.toFixed(2), w: +leftover.toFixed(2), h: +bandH.toFixed(2) });
+  }
+  return out;
+}
+
+/* The plan. Interior coordinates: 0..iw by 0..id, walls added at draw time.
+
+   THE BAND RULE, which is what v1 got wrong:
+   the garage occupies the FRONT-LEFT ONLY. In v1 it ran the full depth of the
+   house with service rooms stacked behind it, so every bedroom had to fit in
+   the 25 feet of width left over — five rooms across 25 feet, 18 feet deep.
+   Bedrooms came out six feet wide and slender enough to be a corridor. The
+   sleeping band now spans the FULL width of the house, and its depth is capped
+   at what a bedroom actually is (11 to 15 feet) rather than whatever depth was
+   left over. Where a deep footprint leaves more than a front band can use, a
+   middle band takes the remainder instead of inflating the bedrooms. */
 function planRooms(opts) {
   const iw = Math.max(8, opts.bw - 2 * WEXT);
   const id = Math.max(8, opts.bd - 2 * WEXT);
@@ -706,53 +801,55 @@ function planRooms(opts) {
   const garW = floor === 1 ? (opts.garW || 0) : 0;
   const rooms = [];
 
-  /* Garage sits in front, its own depth, with service space behind it — that
-     leftover is where a real plan puts the mud room. */
+  /* depth budget, back to front */
+  let hallW = HALL;
+  /* An upper floor is bedrooms on BOTH sides of the hall, so the two bands
+     share the depth evenly. A ground floor puts living space in front, which
+     can take more depth than a bedroom should. */
+  let rearH = (twoSt && floor === 2)
+    ? Math.max(12, Math.min(id * 0.45, 17))
+    : Math.max(11, Math.min(id * 0.38, 15));               // a bedroom is 11-15 ft deep
+  let frontH = id - hallW - rearH;
+  if (frontH < 12) {                                        // shallow house: give the hall back first
+    hallW = Math.max(2.8, Math.min(hallW, id * 0.09));
+    rearH = Math.max(9.5, Math.min(id * 0.42, 15));
+    frontH = id - hallW - rearH;
+  }
+  if (frontH < 9) { frontH = Math.max(8, (id - hallW) * 0.48); rearH = id - hallW - frontH; }
+
+  /* A very deep footprint gets a middle band rather than deeper bedrooms. */
+  let midH = 0;
+  if (frontH > 25) { midH = frontH - 22; frontH = 22; }
+
+  const hallY = frontH + midH;
+  const rearY = hallY + hallW;
+
+  /* garage: front-left, exactly the front band deep */
   let liveX = 0, liveW = iw;
   if (garW > 2) {
-    const gw = Math.min(garW, iw * 0.5);
-    const gd = Math.min(id * 0.62, 22);
-    rooms.push({ n: 'GARAGE', k: 'garage', x: 0, y: 0, w: +gw.toFixed(2), h: +gd.toFixed(2) });
-    const left = id - gd;
-    if (left > 15) {
-      /* A 27-foot-deep mud room is not a room. Split it. */
-      rooms.push({ n: 'LAUNDRY / MUD', k: 'laundry', x: 0, y: +gd.toFixed(2), w: +gw.toFixed(2), h: +(left * 0.42).toFixed(2) });
-      rooms.push({ n: 'STORAGE', k: 'closet', x: 0, y: +(gd + left * 0.42).toFixed(2), w: +gw.toFixed(2), h: +(left * 0.58).toFixed(2) });
-    } else if (left > 6) {
-      rooms.push({ n: twoSt ? 'MUD / STORAGE' : 'LAUNDRY / MUD', k: 'laundry', x: 0, y: +gd.toFixed(2), w: +gw.toFixed(2), h: +left.toFixed(2) });
-    }
+    const gw = Math.min(garW, iw * 0.45);
+    rooms.push({ n: 'GARAGE', k: 'garage', x: 0, y: 0, w: +gw.toFixed(2), h: +frontH.toFixed(2) });
     liveX = gw; liveW = iw - gw;
   }
 
-  /* Bands must always add up to the interior depth. On a small footprint the
-     hall gives way before the rooms do — a 22-foot-deep cottage still has to
-     close, and the v1 arithmetic let the rear band spill outside the wall. */
-  let hallW = HALL;
-  let frontH = Math.min(id * 0.46, 22);
-  let rearH = id - frontH - hallW;
-  if (rearH < 8) {
-    hallW = Math.max(2.8, Math.min(hallW, id * 0.1));
-    frontH = Math.max(7, (id - hallW) * 0.45);
-    rearH = id - frontH - hallW;
-  }
-  if (rearH < 5) { frontH = Math.max(6, (id - hallW) * 0.5); rearH = id - frontH - hallW; }
-  const hallY = frontH;
-  const rearY = frontH + hallW;
+  rooms.push({ n: 'HALL', k: 'hall', x: 0, y: +hallY.toFixed(2), w: +iw.toFixed(2), h: +hallW.toFixed(2) });
 
-  /* Hall runs the living zone, which is what gives every rear room a door. */
-  rooms.push({ n: 'HALL', k: 'hall', x: +liveX.toFixed(2), y: +hallY.toFixed(2), w: +liveW.toFixed(2), h: +hallW.toFixed(2) });
-
-  let front = [], rear = [];
+  let front = [], mid = [], rear = [];
   if (!twoSt) {
     front.push({ n: 'ENTRY', wt: 7, k: 'entry' }, { n: 'LIVING', wt: 17, k: 'living' }, { n: 'KITCHEN / DINING', wt: 16, k: 'kitchen' });
     rear.push({ n: 'PRIMARY BED', wt: 14, k: 'bed' });
     rear.push({ wt: 7, stack: [{ n: 'PRIMARY BATH', k: 'bath', frac: 0.56 }, { n: 'W.I.C.', k: 'closet', frac: 0.44 }] });
+    if (baths >= 2) rear.push({ wt: 6.5, stack: [{ n: 'BATH 2', k: 'bath', frac: 0.55 }, { n: 'LINEN', k: 'closet', frac: 0.45 }] });
     for (let b = 2; b <= beds; b++) rear.push({ n: 'BED ' + b, wt: 12, k: 'bed' });
-    if (baths >= 2) {
-      const svc = garW > 2
-        ? [{ n: 'BATH 2', k: 'bath', frac: 0.55 }, { n: 'LINEN', k: 'closet', frac: 0.45 }]
-        : [{ n: 'BATH 2', k: 'bath', frac: 0.55 }, { n: 'LAUNDRY', k: 'laundry', frac: 0.45 }];
-      rear.splice(Math.min(2, rear.length), 0, { wt: 6.5, stack: svc });
+    if (midH >= 6) {
+      if (garW > 2) mid.push({ n: 'LAUNDRY / MUD', wt: 8, k: 'laundry' }, { n: 'STORAGE', wt: 6, k: 'closet' });
+      else mid.push({ n: 'LAUNDRY', wt: 7, k: 'laundry' });
+      mid.push({ n: 'FLEX / STUDY', wt: 12, k: 'flex' });
+    } else {
+      /* no middle band, so laundry stacks with the second bath */
+      const b2 = rear.find(r => r.stack && r.stack[0].n === 'BATH 2');
+      if (b2) b2.stack[1] = { n: 'LAUNDRY', k: 'laundry', frac: 0.45 };
+      else rear.push({ wt: 6, stack: [{ n: 'LAUNDRY', k: 'laundry', frac: 0.55 }, { n: 'LINEN', k: 'closet', frac: 0.45 }] });
     }
   } else if (floor === 1) {
     front.push({ n: 'ENTRY', wt: 7, k: 'entry' }, { n: 'LIVING', wt: 18, k: 'living' });
@@ -760,6 +857,7 @@ function planRooms(opts) {
     rear.push({ n: 'KITCHEN / DINING', wt: 18, k: 'kitchen' });
     rear.push({ wt: 6, stack: [{ n: 'POWDER', k: 'bath', frac: 0.5 }, { n: 'PANTRY', k: 'closet', frac: 0.5 }] });
     rear.push({ n: 'FLEX / STUDY', wt: 11, k: 'flex' });
+    if (midH >= 6) mid.push({ n: 'LAUNDRY / MUD', wt: 8, k: 'laundry' }, { n: 'DINING', wt: 12, k: 'flex' });
   } else {
     front.push({ n: 'BED 2', wt: 12, k: 'bed' });
     if (baths >= 2) front.push({ wt: 6.5, stack: [{ n: 'BATH 2', k: 'bath', frac: 0.55 }, { n: 'LINEN', k: 'closet', frac: 0.45 }] });
@@ -767,10 +865,20 @@ function planRooms(opts) {
     front.push({ wt: 6, stack: [{ n: 'STAIR', k: 'stairdn', frac: 0.62 }, { n: 'LAUNDRY', k: 'laundry', frac: 0.38 }] });
     rear.push({ n: 'PRIMARY BED', wt: 16, k: 'bed' });
     rear.push({ wt: 7.5, stack: [{ n: 'PRIMARY BATH', k: 'bath', frac: 0.56 }, { n: 'W.I.C.', k: 'closet', frac: 0.44 }] });
+    if (midH >= 6) mid.push({ n: 'LOFT / LANDING', wt: 12, k: 'flex' }, { n: 'LINEN', wt: 4, k: 'closet' });
   }
 
-  rooms.push(...packBand(front, liveX, 0, liveW, frontH));
-  rooms.push(...packBand(rear, liveX, rearY, liveW, rearH));
+  rooms.push(...packBand2(front, liveX, 0, liveW, frontH, { n: 'PORCH / STORAGE', k: 'closet' }));
+  if (midH >= 6) rooms.push(...packBand2(mid, 0, frontH, iw, midH, { n: 'STORAGE', k: 'closet' }));
+  else if (midH > 0 && garW > 2) {
+    /* a sliver behind the garage is storage, not a room with a name */
+    rooms.push({ n: 'STORAGE', k: 'closet', x: 0, y: +frontH.toFixed(2), w: +Math.min(garW, iw * 0.45).toFixed(2), h: +midH.toFixed(2) });
+    rooms.push({ n: 'LAUNDRY', k: 'laundry', x: +Math.min(garW, iw * 0.45).toFixed(2), y: +frontH.toFixed(2), w: +(iw - Math.min(garW, iw * 0.45)).toFixed(2), h: +midH.toFixed(2) });
+  } else if (midH > 0) {
+    rooms.push({ n: 'LAUNDRY', k: 'laundry', x: 0, y: +frontH.toFixed(2), w: +iw.toFixed(2), h: +midH.toFixed(2) });
+  }
+  rooms.push(...packBand2(rear, 0, rearY, iw, rearH,
+    (twoSt && floor === 2) ? { n: 'LOFT / LANDING', k: 'flex' } : { n: 'STORAGE', k: 'closet' }));
   return { rooms, iw, id, hallY, rearY, frontH };
 }
 
@@ -1215,10 +1323,8 @@ function run(){
   const nPlates = TYPE==='sfh'?M.stories : TYPE==='th'?2 : M.stories;
   let plates='';
   for(let f=1;f<=nPlates;f++){
-    /* v2.7: every plate is visible on the free tier. A visitor who cannot see
-       the whole scheme has no reason to buy the rest of it. What is paid for is
-       the MEP layer, the Layout Editor, the printable scheme book and Site
-       Intelligence — all of which are worth more than a hidden floor. */
+    /* v2.7: every plate is visible on the free tier. Paid is the MEP layer, the
+       Layout Editor, the printable scheme book and Site Intelligence. */
     const locked = false;
     const showMEP = S.mep && S.pro;
     const editing = EDIT.on&&EDIT.floor===f&&TYPE==='sfh';

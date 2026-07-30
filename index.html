@@ -145,11 +145,20 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 #scrollTop.on{display:flex}
 #scrollTop:hover{filter:brightness(1.12)}
 @media print{#scrollTop{display:none!important}}
+
+/* "by NESO" byline — the tools are the top of NESO's funnel; a visitor who
+   likes one and cannot tell who made it is a lead lost to good work. */
+#logo{position:relative}
+#logo .byneso{display:block;font-family:Inter,system-ui,sans-serif;font-size:9.5px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--faint,#8698aa);margin-top:1px}
+#logo .byneso a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}
+#logo .byneso a:hover{color:var(--ink,#e9eef4);border-bottom-color:currentColor}
+#logo .lgwrap{display:flex;flex-direction:column;line-height:1.12}
 </style>
 </head>
 <body>
 <header>
-  <div id="logo"><svg width="25" height="25" viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="22" fill="none" stroke="#60a5fa" stroke-width="1.8" stroke-dasharray="3.5 2.5"/><rect x="10" y="12" width="13" height="11" fill="rgba(96,165,250,.22)" stroke="#60a5fa" stroke-width="1.8"/></svg> Site<b>Shaper</b></div>
+  <div id="logo"><svg width="25" height="25" viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="22" fill="none" stroke="#60a5fa" stroke-width="1.8" stroke-dasharray="3.5 2.5"/><rect x="10" y="12" width="13" height="11" fill="rgba(96,165,250,.22)" stroke="#60a5fa" stroke-width="1.8"/></svg><span class="lgwrap"><span>Site<b>Shaper</b></span><span class="byneso"><a href="https://nesohq.com/" target="_blank" rel="noopener">by NESO</a></span></span></div>
   <div class="hsp"></div>
   <button class="pill" id="tourBtn" title="Replay the 60-second tour">&#127891; Tour</button>
   <button class="pill pro" id="proBtn">Unlock full access</button>
@@ -281,7 +290,7 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
 </div>
 
 <button id="scrollTop" title="Back to top" aria-label="Back to top">↑</button>
-<footer><span class="np">SiteShaper &middot; v2.9 &middot; &copy; 2026 NESO &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://buildbrief.nesohq.com/">BuildBrief</a> + <a href="https://proforma.nesohq.com/">ProForma</a>.</footer>
+<footer><span class="np">SiteShaper &middot; v2.10 &middot; &copy; 2026 NESO &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://buildbrief.nesohq.com/">BuildBrief</a> + <a href="https://proforma.nesohq.com/">ProForma</a>.</footer>
 <div id="modal"><div id="mcard"><button class="closex" id="mClose">&times;</button><h2 id="mTitle"></h2><div id="mBody"></div></div></div>
 <div id="toast"></div>
 <div id="tourCard" role="dialog" aria-label="Guided tour">

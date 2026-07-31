@@ -330,11 +330,24 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
    Until it is set the block still renders and says booking is coming soon,
    offering the text line instead — an announced product with a working fallback
    sells better than a section that silently is not there. */
-var ASK_URL = "";
+var ASK_URL = "https://calendar.app.google/k46Yrcp2qFVCxojA9";
+/* PAY FIRST. Google Calendar cannot take the $150 on this Workspace edition, so
+   the public button sends people to Gumroad and the BOOKING LINK LIVES ONLY IN
+   THE RECEIPT. That ordering is the whole control: if the calendar link is
+   public, anyone can take a slot without paying, and collecting afterwards
+   means chasing people who have already had the value. Paste the Gumroad
+   product URL below and the button switches automatically. */
+var ASK_PAY_URL = "";
 (function(){
   var el=document.getElementById('askc'), b=document.getElementById('askcBtn');
   if(!el) return;
-  if(ASK_URL){
+  if(ASK_PAY_URL){
+    var src2=encodeURIComponent(location.hostname.replace(/\.nesohq\.com$/,''));
+    b.href=ASK_PAY_URL+(ASK_PAY_URL.indexOf('?')>-1?'&':'?')+'src='+src2;
+    b.textContent='Book \u2014 $150 \u2192';
+    var n=el.querySelector('.askc-n');
+    if(n) n.innerHTML='<b>Live conversation only.</b> Nothing is researched or written up afterwards \u2014 anything on paper is a report or credit work. Payment is taken at checkout and your booking link is in the receipt.';
+  } else if(ASK_URL){
     var src=encodeURIComponent(location.hostname.replace(/\.nesohq\.com$/,''));
     b.href=ASK_URL+(ASK_URL.indexOf('?')>-1?'&':'?')+'src='+src;
   } else {

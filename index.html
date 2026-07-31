@@ -320,8 +320,8 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
   <div class="askc-b">
     <div class="askc-k">Ask Charles &middot; 30 minutes &middot; $150</div>
     <h3>Stuck on the parcel, not the spreadsheet?</h3>
-    <p>Bring the address and the decision you are trying to make. Charles L. Finkley, Jr., MPA &mdash; 17 years in land use, entitlements and economic development &mdash; answers live from experience. No homework, no waiting.</p>
-    <p class="askc-n"><b>Live conversation only.</b> Nothing is researched or written up afterwards &mdash; anything on paper is a report or credit work, and he will tell you which on the call.</p>
+    <p>Bring the address and the decision you are trying to make. Charles L. Finkley, Jr., MPA &mdash; 17 years in land use, entitlements and economic development &mdash; answers live from experience, and you keep the transcript. No homework, no waiting.</p>
+    <p class="askc-n"><b>You keep the transcript.</b> The call is transcribed and sent to you afterwards &mdash; that is the deliverable. No research beforehand and no new documents after: anything drawn, modelled or researched is a report or credit work, and he will tell you which on the call.</p>
     <a class="askc-btn" id="askcBtn" href="#" target="_blank" rel="noopener">Book 30 minutes &rarr;</a>
   </div>
 </div>
@@ -337,7 +337,7 @@ var ASK_URL = "https://calendar.app.google/k46Yrcp2qFVCxojA9";
    public, anyone can take a slot without paying, and collecting afterwards
    means chasing people who have already had the value. Paste the Gumroad
    product URL below and the button switches automatically. */
-var ASK_PAY_URL = "";
+var ASK_PAY_URL = "https://nesohq.gumroad.com/l/gugtzc";
 (function(){
   var el=document.getElementById('askc'), b=document.getElementById('askcBtn');
   if(!el) return;
@@ -346,7 +346,7 @@ var ASK_PAY_URL = "";
     b.href=ASK_PAY_URL+(ASK_PAY_URL.indexOf('?')>-1?'&':'?')+'src='+src2;
     b.textContent='Book \u2014 $150 \u2192';
     var n=el.querySelector('.askc-n');
-    if(n) n.innerHTML='<b>Live conversation only.</b> Nothing is researched or written up afterwards \u2014 anything on paper is a report or credit work. Payment is taken at checkout and your booking link is in the receipt.';
+    if(n) n.innerHTML='<b>You keep the transcript.</b> The call is transcribed and sent afterwards \u2014 that is the deliverable. No research beforehand, no new documents after. Payment is taken at checkout and your booking link is in the receipt.';
   } else if(ASK_URL){
     var src=encodeURIComponent(location.hostname.replace(/\.nesohq\.com$/,''));
     b.href=ASK_URL+(ASK_URL.indexOf('?')>-1?'&':'?')+'src='+src;

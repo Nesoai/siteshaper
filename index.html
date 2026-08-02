@@ -6,6 +6,13 @@
 <title>SiteShaper — from lot to scheme book</title>
 <meta name="description" content="SiteShaper turns a lot and a program into a schematic scheme book: site plan with setbacks, auto-generated floor plates, MEP location markers for single-family, and the numbers table — ready for your architect to review and build from.">
 <link rel="canonical" href="https://siteshaper.nesohq.com/">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#60a5fa">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SiteShaper">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="NESO">
@@ -182,7 +189,7 @@ footer{border-top:1px solid var(--line);padding:20px 18px;font-size:12px;color:v
   border-radius:999px;padding:10px 18px;text-decoration:none;margin-top:4px}
 @media print{.askc{display:none!important}}
 </style>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "SiteShaper", "applicationCategory": "DesignApplication", "operatingSystem": "Any (web browser)", "url": "https://siteshaper.nesohq.com/", "description": "Lot in, scheme book out: site plan with setbacks, schematic floor plates with real proportions, and the numbers table. Free and watermarked in your browser; $199 for the scheme book and editor.", "browserRequirements": "Runs in any modern browser. No account required.", "publisher": {"@type": "Organization", "name": "NESO", "url": "https://nesohq.com/", "email": "hello@nesohq.com", "telephone": "+1-901-295-0322"}, "offers": [{"@type": "Offer", "name": "SiteShaper (free)", "price": "0", "priceCurrency": "USD", "description": "The complete analysis with your own numbers, in the browser, with no account."}, {"@type": "Offer", "name": "SiteShaper Pro", "price": "199", "priceCurrency": "USD", "url": "https://siteshaper.nesohq.com/", "description": "One-time unlock, owned forever: print and export, editing, depth."}], "isAccessibleForFree": true}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "SiteShaper", "applicationCategory": "DesignApplication", "operatingSystem": "Any (web browser)", "url": "https://siteshaper.nesohq.com/", "description": "Lot in, scheme book out: site plan with setbacks, schematic floor plates with real proportions, and the numbers table. Free and watermarked in your browser; $199 for the scheme book and editor.", "browserRequirements": "Runs in any modern browser. No account required.", "publisher": {"@type": "Organization", "name": "NESO", "url": "https://nesohq.com/", "telephone": "+1-901-295-0322"}, "offers": [{"@type": "Offer", "name": "SiteShaper (free)", "price": "0", "priceCurrency": "USD", "description": "The complete analysis with your own numbers, in the browser, with no account."}, {"@type": "Offer", "name": "SiteShaper Pro", "price": "199", "priceCurrency": "USD", "url": "https://siteshaper.nesohq.com/", "description": "One-time unlock, owned forever: print and export, editing, depth."}], "isAccessibleForFree": true}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How many units or how much building actually fits on my lot?", "acceptedAnswer": {"@type": "Answer", "text": "Buildable area is the lot minus front, side and rear setbacks, then limited by lot coverage, height, parking and any easements. Zoning density is a ceiling, not a promise — parking and setbacks bind first on most infill lots. SiteShaper draws the envelope so the constraint that binds is visible rather than assumed."}}, {"@type": "Question", "name": "What is a schematic site plan?", "acceptedAnswer": {"@type": "Answer", "text": "A scaled drawing showing the lot, its setbacks, the building footprint, access and parking — enough to test whether a program fits and to start a conversation with a planner. It is not a construction document and carries no engineering, which is why it is the right thing to produce before hiring anyone."}}, {"@type": "Question", "name": "How do setbacks change what I can build?", "acceptedAnswer": {"@type": "Answer", "text": "They shrink the buildable rectangle from every side that has one, and on a narrow lot the side setbacks usually decide the answer before density does. A 50-foot lot with 10-foot side setbacks leaves 30 feet of width, which caps the plan depth of every room behind it."}}, {"@type": "Question", "name": "Can I get floor plans without hiring an architect first?", "acceptedAnswer": {"@type": "Answer", "text": "You can get schematic plates that show room sizes, adjacencies and proportions — useful for testing a program and pricing a scope. You cannot get drawings you can build from. Every SiteShaper plate is marked schematic and not for construction, and a licensed professional still has to take it from there."}}]}</script>
 </head>
 <body>
@@ -403,7 +410,7 @@ var ASK_PAY_URL = "https://nesohq.gumroad.com/l/gugtzc";
   <dt>Can I get floor plans without hiring an architect first?</dt>
   <dd>You can get schematic plates that show room sizes, adjacencies and proportions — useful for testing a program and pricing a scope. You cannot get drawings you can build from. Every SiteShaper plate is marked schematic and not for construction, and a licensed professional still has to take it from there.</dd>
 </dl>
-<p class="nqa-foot">SiteShaper is free to run in your browser with no account. Pro is a one-time $199 unlock that adds the printable exhibit, editing and depth — owned forever, not a subscription. Built by <a href="https://nesohq.com/">NESO</a>, an advisory and tools practice for business and real estate. Questions: <a href="mailto:hello@nesohq.com">hello@nesohq.com</a>.</p>
+<p class="nqa-foot">SiteShaper is free to run in your browser with no account, and it installs — see below to put it on your phone or desktop.  Pro is a one-time $199 unlock that adds the printable exhibit, editing and depth — owned forever, not a subscription. Built by <a href="https://nesohq.com/">NESO</a>, an advisory and tools practice for business and real estate. Questions: <a href="https://neso-queue.nesoai-us.workers.dev/form/intake?source=tool-siteshaper">send them here</a>.</p>
 </section>
 <footer><span class="np">SiteShaper &middot; v2.15 &middot; &copy; 2026 NESO &mdash; all rights reserved &middot; <a href="https://neso-queue.nesoai-us.workers.dev/form/feedback?source=siteshaper" target="_blank" rel="noopener">Feedback</a> &middot; </span>Schematic design intent only &mdash; review with licensed professionals. Works with <a href="https://buildbrief.nesohq.com/">BuildBrief</a> + <a href="https://proforma.nesohq.com/">ProForma</a>.</footer>
 <div id="modal"><div id="mcard"><button class="closex" id="mClose">&times;</button><h2 id="mTitle"></h2><div id="mBody"></div></div></div>
@@ -416,14 +423,14 @@ var ASK_PAY_URL = "https://nesohq.gumroad.com/l/gugtzc";
 
 <script>
 /* ============ SITESHAPER v1.0 (Phase A) ============ */
-const BUY_DESIGN="https://nesoai.gumroad.com/l/uutuy";
-const BUY_EDITOR="https://nesoai.gumroad.com/l/ktswx";
-const BUY_INTEL="https://nesoai.gumroad.com/l/ommjyh";
+const BUY_DESIGN="https://nesohq.gumroad.com/l/uutuy";
+const BUY_EDITOR="https://nesohq.gumroad.com/l/ktswx";
+const BUY_INTEL="https://nesohq.gumroad.com/l/ommjyh";
 const SITE_DATA="https://neso-site-data.nesoai-us.workers.dev/site";
 const PRICE_TXT="$199 founding price";
 const PRICE_EDITOR="$29";
 const PRICE_INTEL="$169";
-const BUY_INTEL_SUB="https://nesoai.gumroad.com/l/ommjyh"; // monthly option — set as Gumroad membership tier on same product or separate
+const BUY_INTEL_SUB="https://nesohq.gumroad.com/l/ommjyh"; // monthly option — set as Gumroad membership tier on same product or separate
 const NESO_CTA="https://neso-queue.nesoai-us.workers.dev/form/intake?track=re&services="+encodeURIComponent("Development Feasibility (Standard)")+"&credits=12&source=siteshaper";
 
 const $=id=>document.getElementById(id);
@@ -1783,4 +1790,79 @@ onType(); proUI(); run();
 @media print{#toTop{display:none!important}}
 </style>
 <script>(function(){var b=document.getElementById('toTop');function chk(){if(window.scrollY>500)b.classList.add('on');else b.classList.remove('on');}window.addEventListener('scroll',chk,{passive:true});chk();})();</script>
+<script>
+/* Installable as a web app: manifest + icons + this registration. No store, no
+   review, no 15-30% platform fee on a digital unlock. The worker caches nothing
+   by design — see sw.js. */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () { /* not fatal */ });
+  });
+}
+</script>
+
+<style>
+.nqi{margin-top:16px;padding:14px 16px;border:1px solid rgba(127,127,127,.3);border-radius:12px;
+font-size:14px;line-height:1.55;display:none}
+.nqi b{display:block;font-size:14.5px;margin-bottom:4px}
+.nqi p{margin:0;opacity:.82;font-size:13.5px}
+.nqi button{font:inherit;font-size:13.5px;font-weight:700;margin-top:10px;padding:9px 18px;
+border-radius:999px;border:1.5px solid currentColor;background:transparent;color:inherit;cursor:pointer}
+.nqi button:hover{opacity:.75}
+.nqi ol{margin:8px 0 0 18px;padding:0;font-size:13.5px;opacity:.82}
+.nqi li{margin-bottom:3px}
+@media print{.nqi{display:none!important}}
+</style>
+<script>
+/* Install helper. Three states, because the three platforms genuinely differ and
+   telling everyone to "click install" would be wrong for roughly half of them:
+     Chrome / Edge / Android — a real button, using the deferred prompt event.
+     iOS Safari              — no API exists; show the actual tap sequence.
+     Already installed       — say nothing at all.
+   Lives inside the answer section, below the fold: somebody who has not run the
+   tool yet has no reason to install it. */
+(function(){
+  var host = document.querySelector('.nqa-foot') || document.querySelector('.nqa');
+  if(!host) return;
+  var box = document.createElement('div');
+  box.className = 'nqi';
+  host.parentNode.insertBefore(box, host.nextSibling);
+
+  var standalone = window.matchMedia('(display-mode: standalone)').matches
+                   || window.navigator.standalone === true;
+  if(standalone) return;                       // already installed — nothing to say
+
+  var ua = navigator.userAgent || '';
+  var isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  var deferred = null;
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault(); deferred = e;
+    box.innerHTML = '<b>Install SiteShaper on this device</b>' +
+      '<p>It opens in its own window, keeps working the same way, and takes about two seconds. ' +
+      'Nothing is downloaded from a store and no account is created.</p>' +
+      '<p style="margin-top:7px"><b>If you are planning to buy Pro, install first, then enter your code.</b> ' +
+      'A code can only be redeemed once, and the installed app keeps its own unlock.</p>' +
+      '<button type="button">Install SiteShaper</button>';
+    box.style.display = 'block';
+    box.querySelector('button').addEventListener('click', function(){
+      if(!deferred) return;
+      deferred.prompt();
+      deferred.userChoice.then(function(){ deferred = null; box.style.display = 'none'; });
+    });
+  });
+
+  if(isIOS){
+    box.innerHTML = '<b>Add SiteShaper to your Home Screen</b>' +
+      '<p>iPhone and iPad do this from the Share menu rather than a button:</p>' +
+      '<ol><li>Tap the Share icon — the square with an arrow, at the bottom of Safari.</li>' +
+      '<li>Scroll down and tap <b>Add to Home Screen</b>.</li>' +
+      '<li>Tap <b>Add</b>. SiteShaper appears with the other apps.</li></ol>' +
+      '<p style="margin-top:9px"><b>Buying Pro? Add to Home Screen first, then enter your code there.</b> ' +
+      'On iPhone the Home Screen app keeps its own unlock, separate from Safari, and a code can only be redeemed once.</p>';
+    box.style.display = 'block';
+  }
+})();
+</script>
+
 </body></html>

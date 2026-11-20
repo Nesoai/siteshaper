@@ -31,5 +31,5 @@ Questions: hello@nesohq.com · (901) 295-0322.
 - [CapStack](https://capstack.nesohq.com/)
 - [ProForma](https://proforma.nesohq.com/)
 - [BuildBrief](https://buildbrief.nesohq.com/)
-- [Bird's Eye instant read](https://birdseye.nesohq.com/): a free first look at a parcel, with written reports quoted to scope.
+- [Bird's Eye instant read](https://birdseye.nesohq.com/): a free estimate of an entitlement timeline, with written reports quoted to scope.
 - [NESO for Contractors](https://contractors.nesohq.com/): free public bids and state-by-state guides for contractors.

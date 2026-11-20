@@ -1,0 +1,35 @@
+# SiteShaper
+
+> SiteShaper turns a lot and a program into a schematic scheme book: site plan with setbacks, auto-generated floor plates, MEP location markers for single-family, and the numbers table — ready for your architect to review and build from.
+
+SiteShaper is a free web tool at https://siteshaper.nesohq.com/. It runs in the browser with no account.
+It is for owners, small developers and builders testing what fits on a lot before hiring an architect.
+
+## Questions SiteShaper answers
+
+- **How many units or how much building actually fits on my lot?** Buildable area is the lot minus front, side and rear setbacks, then limited by lot coverage, height, parking and any easements.
+- **What is a schematic site plan?** A scaled drawing showing the lot, its setbacks, the building footprint, access and parking — enough to test whether a program fits and to start a conversation with a planner.
+- **How do setbacks change what I can build?** They shrink the buildable rectangle from every side that has one, and on a narrow lot the side setbacks usually decide the answer before density does.
+- **Can I get floor plans without hiring an architect first?** You can get schematic plates that show room sizes, adjacencies and proportions — useful for testing a program and pricing a scope.
+
+## Use it
+
+- [Open SiteShaper](https://siteshaper.nesohq.com/)
+
+## About NESO
+
+SiteShaper is made by NESO HQ LLC, which offers advisory services, research reports and free tools for founders,
+small businesses, developers and municipalities: https://nesohq.com/ (its llms.txt: https://nesohq.com/llms.txt).
+Questions: hello@nesohq.com · (901) 295-0322.
+
+## Other free NESO tools
+
+- [GrantFit](https://grantfit.nesohq.com/)
+- [MarketFit](https://marketfit.nesohq.com/)
+- [PlanForge](https://planforge.nesohq.com/)
+- [MarketScope](https://marketscope.nesohq.com/)
+- [CapStack](https://capstack.nesohq.com/)
+- [ProForma](https://proforma.nesohq.com/)
+- [BuildBrief](https://buildbrief.nesohq.com/)
+- [Bird's Eye instant read](https://birdseye.nesohq.com/): a free first look at a parcel, with written reports quoted to scope.
+- [NESO for Contractors](https://contractors.nesohq.com/): free public bids and state-by-state guides for contractors.
